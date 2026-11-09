@@ -88,9 +88,11 @@ func setup_character() -> void:
 			placeholder.visible = false
 	
 	# Find Skeleton3D and AnimationPlayer
-	skeleton = char_node.get_node_or_null("Skeleton3D")
-	anim_player = char_node.get_node_or_null("AnimationPlayer")
+	skeleton = char_node.find_child("*Skeleton3D*", true, false) as Skeleton3D
+	if not skeleton:
+		skeleton = char_node.get_node_or_null("Skeleton3D")
 	
+	anim_player = char_node.find_child("*AnimationPlayer*", true, false) as AnimationPlayer
 	if not anim_player:
 		for child in char_node.get_children():
 			if child is AnimationPlayer:
@@ -98,11 +100,16 @@ func setup_character() -> void:
 				break
 	
 	if skeleton:
-		var r_hand_idx = skeleton.find_bone("mixamorig_RightHand")
-		if r_hand_idx != -1:
+		var hand_candidates = ["mixamorig_RightHand", "mixamorig:RightHand", "RightHand", "mixamorig9_RightHand"]
+		var found_bone = ""
+		for b in hand_candidates:
+			if skeleton.find_bone(b) != -1:
+				found_bone = b
+				break
+		if found_bone != "":
 			hand_attachment = BoneAttachment3D.new()
 			hand_attachment.name = "RightHandAttachment"
-			hand_attachment.bone_name = "mixamorig_RightHand"
+			hand_attachment.bone_name = found_bone
 			skeleton.add_child(hand_attachment)
 	
 	if anim_player and shared_anim_lib:
@@ -122,20 +129,37 @@ func get_hand_holder() -> Node3D:
 		return hand_attachment
 	return self
 
-func update_locomotion(horizontal_speed: float, is_sprinting: bool, is_sliding: bool, is_gliding: bool) -> void:
+func update_locomotion(horizontal_speed: float, is_sprinting: bool, is_sliding: bool, is_gliding: bool, is_aiming: bool = false, active_slot: int = 1, is_skydiving: bool = false) -> void:
 	if is_action_playing:
 		return
 	
 	if is_gliding:
 		play_anim("glide")
+	elif is_skydiving:
+		play_anim("skydive")
 	elif is_sliding:
 		play_anim("slide")
+	elif is_aiming and (active_slot >= 1 and active_slot <= 3):
+		play_anim("aim")
 	elif horizontal_speed > 6.5:
-		play_anim("sprint")
+		if active_slot >= 1 and active_slot <= 3 and anim_player and anim_player.has_animation("rifle_run"):
+			play_anim("rifle_run")
+		elif active_slot == 0 and anim_player and anim_player.has_animation("axe_run"):
+			play_anim("axe_run")
+		else:
+			play_anim("sprint")
 	elif horizontal_speed > 0.8:
-		play_anim("run")
+		if active_slot >= 1 and active_slot <= 3 and anim_player and anim_player.has_animation("rifle_walk"):
+			play_anim("rifle_walk")
+		elif active_slot == 0 and anim_player and anim_player.has_animation("axe_walk"):
+			play_anim("axe_walk")
+		else:
+			play_anim("run")
 	else:
-		play_anim("idle")
+		if is_aiming and anim_player and anim_player.has_animation("aim"):
+			play_anim("aim")
+		else:
+			play_anim("idle")
 
 func play_action(action_name: String) -> void:
 	if not anim_player or not anim_player.has_animation(action_name):
@@ -145,10 +169,23 @@ func play_action(action_name: String) -> void:
 	anim_player.play(action_name, 0.15)
 	
 	var anim_length = anim_player.get_animation(action_name).length
-	get_tree().create_timer(min(anim_length, 0.6)).timeout.connect(func():
+	var action_dur = 0.5
+	if action_name == "reload":
+		action_dur = min(anim_length, 2.2)
+	elif action_name == "drink":
+		action_dur = min(anim_length, 2.5)
+	elif action_name == "swing":
+		action_dur = 0.4
+	else:
+		action_dur = min(anim_length, 0.6)
+	
+	get_tree().create_timer(action_dur).timeout.connect(func():
 		is_action_playing = false
 		current_anim_name = ""
 	)
+
+func play_action_animation(action_name: String, _duration: float = -1.0) -> void:
+	play_action(action_name)
 
 func play_anim(anim_name: String) -> void:
 	if not anim_player or not anim_player.has_animation(anim_name):

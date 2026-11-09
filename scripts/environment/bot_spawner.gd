@@ -4,7 +4,7 @@ class_name BotSpawner
 ## Spawns Battle Royale AI Bots across island zones and drops from Battle Bus
 
 @export var bot_scene: PackedScene = preload("res://scenes/bot/bot.tscn")
-@export var initial_ground_bots: int = 8
+@export var initial_ground_bots: int = 11
 
 const BOT_NAMES = [
 	"Bot_Ninja", "Bot_Vanguard", "Bot_Swat", "Bot_Recon", "Bot_Dusk", "Bot_Ember",
@@ -37,8 +37,8 @@ func spawn_initial_bots() -> void:
 		var bot_name_idx = i % BOT_NAMES.size()
 		bot.bot_name = BOT_NAMES[bot_name_idx]
 		
-		var rx = rand.randf_range(-130.0, 130.0)
-		var rz = rand.randf_range(-130.0, 130.0)
+		var rx = rand.randf_range(-160.0, 160.0)
+		var rz = rand.randf_range(-160.0, 160.0)
 		if Vector2(rx, rz).length() < 25.0:
 			rx += 35.0
 			rz += 35.0

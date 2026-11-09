@@ -219,7 +219,7 @@ func handle_scoping(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if not GameManager.is_in_match or is_on_battle_bus:
 		if character_animator and character_animator.has_method("update_locomotion"):
-			character_animator.update_locomotion(0.0, false, false, false)
+			character_animator.update_locomotion(0.0, false, false, false, false, Globals.active_slot, false)
 		return
 	
 	handle_crouch_and_slide(delta)
@@ -232,7 +232,7 @@ func _physics_process(delta: float) -> void:
 	if character_animator and character_animator.has_method("update_locomotion"):
 		var horiz_speed = Vector2(velocity.x, velocity.z).length()
 		var in_air = not is_on_floor()
-		character_animator.update_locomotion(horiz_speed, is_sprinting, is_sliding, in_air and (is_gliding or is_skydiving))
+		character_animator.update_locomotion(horiz_speed, is_sprinting, is_sliding, in_air and is_gliding, is_aiming, Globals.active_slot, in_air and is_skydiving and not is_gliding)
 
 func handle_crouch_and_slide(delta: float) -> void:
 	if is_skydiving:
@@ -261,6 +261,8 @@ func handle_crouch_and_slide(delta: float) -> void:
 		collision_shape.position.y = shape.height / 2.0
 
 func handle_jump_and_glider(delta: float) -> void:
+	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	
 	if is_on_floor():
 		if is_skydiving:
 			is_skydiving = false
@@ -269,6 +271,7 @@ func handle_jump_and_glider(delta: float) -> void:
 		is_gliding = false
 		if glider_mesh:
 			glider_mesh.visible = false
+			glider_mesh.rotation = glider_mesh.rotation.lerp(Vector3.ZERO, delta * 10.0)
 		
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_VELOCITY
@@ -299,13 +302,27 @@ func handle_jump_and_glider(delta: float) -> void:
 				asp.play()
 				get_tree().create_timer(1.5).timeout.connect(asp.queue_free)
 		
-		# Apply gravity and fall terminal velocity
+		# Apply gravity, gliding banking, and terminal velocities
 		if is_gliding:
-			velocity.y = max(GLIDE_FALL_SPEED, velocity.y - (gravity * 0.25 * delta))
+			velocity.y = max(-5.2, velocity.y - (gravity * 0.2 * delta))
+			if glider_mesh:
+				var target_roll = -input_dir.x * deg_to_rad(24.0)
+				var target_pitch = -0.15 if input_dir.y < -0.1 else 0.0
+				glider_mesh.rotation.z = lerp_angle(glider_mesh.rotation.z, target_roll, delta * 8.0)
+				glider_mesh.rotation.x = lerp_angle(glider_mesh.rotation.x, target_pitch, delta * 6.0)
 		elif is_skydiving:
-			velocity.y = max(-22.0, velocity.y - (gravity * 1.1 * delta))
+			var target_fall = -22.0
+			if Input.is_action_pressed("move_forward"):
+				target_fall = -34.0
+			elif Input.is_action_pressed("move_backward"):
+				target_fall = -16.0
+			velocity.y = move_toward(velocity.y, target_fall, gravity * 1.5 * delta)
+			if glider_mesh:
+				glider_mesh.rotation = glider_mesh.rotation.lerp(Vector3.ZERO, delta * 10.0)
 		else:
 			velocity.y -= gravity * delta
+			if glider_mesh:
+				glider_mesh.rotation = glider_mesh.rotation.lerp(Vector3.ZERO, delta * 10.0)
 
 func handle_movement(delta: float) -> void:
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
@@ -321,9 +338,9 @@ func handle_movement(delta: float) -> void:
 	elif is_crouching:
 		current_speed = CROUCH_SPEED
 	elif is_gliding:
-		current_speed = SPRINT_SPEED * 1.2
+		current_speed = 17.5
 	elif is_skydiving:
-		current_speed = SPRINT_SPEED * 1.5
+		current_speed = 22.0 if Input.is_action_pressed("move_forward") else 14.0
 	
 	if direction:
 		velocity.x = lerp(velocity.x, direction.x * current_speed, delta * 10.0)

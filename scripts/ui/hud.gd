@@ -30,6 +30,10 @@ class_name GameHUD
 @onready var crosshair: Control = $CenterCrosshair
 @onready var sniper_scope: Control = $SniperScopeOverlay
 @onready var hotbar_container: HBoxContainer = $BottomCenter/Hotbar
+@onready var ammo_container: PanelContainer = $BottomRight/AmmoContainer
+@onready var ammo_label: Label = $BottomRight/AmmoContainer/HBox/AmmoLabel
+@onready var poi_banner: PanelContainer = $POIBanner
+@onready var poi_label: Label = $POIBanner/POILabel
 
 func _ready() -> void:
 	Globals.health_changed.connect(_on_health_changed)
@@ -38,6 +42,8 @@ func _ready() -> void:
 	Globals.storm_updated.connect(_on_storm_updated)
 	Globals.active_slot_changed.connect(_on_active_slot_changed)
 	Globals.scoping_changed.connect(_on_scoping_changed)
+	Globals.ammo_changed.connect(_on_ammo_changed)
+	Globals.poi_entered.connect(show_poi)
 	
 	GameManager.alive_count_changed.connect(_on_alive_count_changed)
 	GameManager.player_eliminated.connect(_on_player_eliminated)
@@ -204,3 +210,28 @@ func _on_scoping_changed(is_scoping: bool, is_sniper: bool) -> void:
 		sniper_scope.visible = is_scoping and is_sniper
 	if crosshair:
 		crosshair.visible = not (is_scoping and is_sniper)
+
+func _on_ammo_changed(current_mag: int, reserve: int) -> void:
+	if not ammo_container or not ammo_label:
+		return
+	if current_mag < 0:
+		ammo_container.visible = false
+	else:
+		ammo_container.visible = true
+		ammo_label.text = "%d / %d" % [current_mag, reserve]
+		if current_mag == 0:
+			ammo_label.add_theme_color_override("font_color", Color(1.0, 0.25, 0.25))
+		else:
+			ammo_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
+
+func show_poi(poi_name: String) -> void:
+	if not poi_banner or not poi_label:
+		return
+	poi_banner.visible = true
+	poi_label.text = "📍 " + poi_name.to_upper()
+	poi_banner.modulate = Color(1, 1, 1, 1)
+	
+	var tween = create_tween()
+	tween.tween_interval(3.0)
+	tween.tween_property(poi_banner, "modulate:a", 0.0, 0.8)
+	tween.tween_callback(func(): poi_banner.visible = false)

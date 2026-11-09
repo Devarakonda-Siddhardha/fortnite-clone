@@ -8,6 +8,8 @@ signal materials_changed(wood: int, stone: int, metal: int)
 signal active_slot_changed(slot_idx: int)
 signal storm_updated(radius: float, center: Vector3, phase: int, time_left: float)
 signal scoping_changed(is_scoping: bool, is_sniper: bool)
+signal ammo_changed(current_mag: int, reserve: int)
+signal poi_entered(poi_name: String)
 
 enum MaterialType {
 	WOOD,

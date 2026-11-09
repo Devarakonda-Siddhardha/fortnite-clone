@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://supplydrop001"]
+
+[ext_resource type="Script" path="res://scripts/environment/supply_drop.gd" id="1_script"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crate"]
+size = Vector3(1.6, 1.8, 1.6)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_trigger"]
+radius = 3.6
+
+[node name="SupplyDrop" type="CharacterBody3D"]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("BoxShape3D_crate")
+
+[node name="InteractionArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0, 0)
+shape = SubResource("SphereShape3D_trigger")
