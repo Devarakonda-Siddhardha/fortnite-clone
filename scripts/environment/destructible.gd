@@ -4,7 +4,7 @@ class_name DestructibleProp
 ## Breakable world object using authentic 3D .glb models
 
 @export var max_health: float = 120.0
-@export var material_type: Globals.MaterialType = Globals.MaterialType.WOOD
+@export_enum("Wood", "Stone", "Metal") var material_type: int = 0
 @export var material_yield_on_destroy: int = 30
 @export var glb_model_path: String = ""
 
@@ -14,11 +14,11 @@ var model_node: Node3D = null
 func _ready() -> void:
 	current_health = max_health
 	add_to_group("harvestable")
-	if material_type == Globals.MaterialType.WOOD:
+	if material_type == 0:
 		add_to_group("tree")
-	elif material_type == Globals.MaterialType.STONE:
+	elif material_type == 1:
 		add_to_group("rock")
-	elif material_type == Globals.MaterialType.METAL:
+	elif material_type == 2:
 		add_to_group("metal")
 	
 	if glb_model_path != "" and ResourceLoader.exists(glb_model_path):

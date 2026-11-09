@@ -1,13 +1,17 @@
-[gd_scene load_steps=12 format=3 uid="uid://lobby001"]
+[gd_scene load_steps=22 format=3 uid="uid://lobby001"]
 
 [ext_resource type="Script" path="res://scripts/ui/lobby.gd" id="1_lobby"]
 [ext_resource type="AudioStream" path="res://assets/audio/lobby_music.mp3" id="2_music"]
+[ext_resource type="PackedScene" path="res://assets/models/warehouse.glb" id="3_warehouse"]
+[ext_resource type="PackedScene" path="res://assets/models/lookout_tower.glb" id="4_tower"]
+[ext_resource type="PackedScene" path="res://assets/models/tree_oak.glb" id="5_tree_oak"]
+[ext_resource type="PackedScene" path="res://assets/models/rock_01.glb" id="6_rock"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lobby"]
-sky_top_color = Color(0.18, 0.25, 0.45, 1)
-sky_horizon_color = Color(0.35, 0.4, 0.6, 1)
-ground_bottom_color = Color(0.1, 0.12, 0.2, 1)
-ground_horizon_color = Color(0.25, 0.3, 0.45, 1)
+sky_top_color = Color(0.24, 0.16, 0.44, 1)
+sky_horizon_color = Color(0.86, 0.44, 0.58, 1)
+ground_bottom_color = Color(0.12, 0.08, 0.18, 1)
+ground_horizon_color = Color(0.38, 0.22, 0.32, 1)
 
 [sub_resource type="Sky" id="Sky_lobby"]
 sky_material = SubResource("ProceduralSkyMaterial_lobby")
@@ -16,76 +20,210 @@ sky_material = SubResource("ProceduralSkyMaterial_lobby")
 background_mode = 2
 sky = SubResource("Sky_lobby")
 ambient_light_source = 2
-ambient_light_color = Color(0.6, 0.7, 0.9, 1)
-ambient_light_energy = 0.8
+ambient_light_color = Color(0.82, 0.65, 0.76, 1)
+ambient_light_energy = 0.75
 tonemap_mode = 2
 glow_enabled = true
-glow_bloom = 0.2
+glow_bloom = 0.25
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_pedestal"]
-top_radius = 1.2
-bottom_radius = 1.4
-height = 0.3
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(40, 40)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.14, 0.15, 0.2, 1)
+metallic = 0.35
+roughness = 0.25
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_main_pedestal"]
+top_radius = 1.15
+bottom_radius = 1.35
+height = 0.18
+radial_segments = 48
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_main_pedestal"]
+albedo_color = Color(0.08, 0.16, 0.24, 1)
+metallic = 0.7
+roughness = 0.2
+emission_enabled = true
+emission = Color(0, 0.88, 1, 1)
+emission_energy_multiplier = 2.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_squad_pedestal"]
+top_radius = 0.85
+bottom_radius = 1.0
+height = 0.14
 radial_segments = 36
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pedestal"]
-albedo_color = Color(0.12, 0.15, 0.22, 1)
-metallic = 0.8
-roughness = 0.3
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_squad_pedestal"]
+albedo_color = Color(0.14, 0.15, 0.22, 1)
+metallic = 0.75
+roughness = 0.35
 emission_enabled = true
-emission = Color(0.15, 0.5, 0.9, 1)
-emission_energy_multiplier = 0.6
+emission = Color(0.25, 0.45, 0.7, 1)
+emission_energy_multiplier = 0.5
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
-bg_color = Color(0.06, 0.08, 0.14, 0.85)
-border_width_bottom = 3
-border_color = Color(0.95, 0.8, 0.1, 1)
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_top_bar"]
+bg_color = Color(0.05, 0.07, 0.12, 0.8)
+border_width_bottom = 1
+border_color = Color(0.1, 0.6, 0.9, 0.35)
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.08, 0.1, 0.16, 0.9)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_selected"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 18.0
+content_margin_top = 4.0
+content_margin_right = 18.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_normal"]
+bg_color = Color(0, 0, 0, 0)
+content_margin_left = 14.0
+content_margin_top = 4.0
+content_margin_right = 14.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_admin_btn"]
+bg_color = Color(0.04, 0.14, 0.22, 0.9)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.2, 0.5, 0.8, 0.8)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+border_color = Color(0, 0.9, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 content_margin_left = 16.0
-content_margin_top = 12.0
+content_margin_top = 6.0
 content_margin_right = 16.0
-content_margin_bottom = 12.0
+content_margin_bottom = 6.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_play_btn"]
-bg_color = Color(0.96, 0.78, 0.08, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(1, 1, 1, 0.9)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_admin_btn_hover"]
+bg_color = Color(0.06, 0.22, 0.35, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 1, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 16.0
+content_margin_top = 6.0
+content_margin_right = 16.0
+content_margin_bottom = 6.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-bg_color = Color(0.15, 0.22, 0.35, 0.85)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_left_card"]
+bg_color = Color(0.06, 0.08, 0.13, 0.85)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.3, 0.6, 0.9, 0.7)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+border_color = Color(0.2, 0.3, 0.45, 0.5)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mode_pill"]
+bg_color = Color(0.11, 0.14, 0.21, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.5, 0.6)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_equipped"]
+bg_color = Color(0.09, 0.11, 0.18, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.2, 0.95, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_play_btn"]
+bg_color = Color(1, 0.9, 0.05, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 0.85, 0.9)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_play_btn_hover"]
+bg_color = Color(1, 0.95, 0.25, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_panel"]
+bg_color = Color(0.06, 0.09, 0.16, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.85, 1, 0.85)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_btn"]
+bg_color = Color(0.1, 0.18, 0.3, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.15, 0.6, 0.95, 0.7)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -118,152 +256,532 @@ render_target_update_mode = 3
 environment = SubResource("Environment_lobby")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
-transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 8, 4)
-light_energy = 1.2
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 10, 6)
+light_color = Color(1, 0.92, 0.85, 1)
+light_energy = 1.4
 shadow_enabled = true
 
-[node name="PedestalGlow" type="OmniLight3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
-light_color = Color(0.2, 0.7, 1, 1)
-light_energy = 2.5
-omni_range = 4.0
+[node name="Floor" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+mesh = SubResource("PlaneMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="BackdropWarehouse" parent="SubViewportContainer/SubViewport/ShowcaseWorld" instance=ExtResource("3_warehouse")]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, -12)
+
+[node name="BackdropTower" parent="SubViewportContainer/SubViewport/ShowcaseWorld" instance=ExtResource("4_tower")]
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 7.5, 0, -9)
+
+[node name="TreeLeft" parent="SubViewportContainer/SubViewport/ShowcaseWorld" instance=ExtResource("5_tree_oak")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -5.5, 0, -6.5)
+
+[node name="TreeRight" parent="SubViewportContainer/SubViewport/ShowcaseWorld" instance=ExtResource("5_tree_oak")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 5.2, 0, -7.0)
+
+[node name="RockRight" parent="SubViewportContainer/SubViewport/ShowcaseWorld" instance=ExtResource("6_rock")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 4.2, 0, -3.5)
 
 [node name="PedestalMesh" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
-mesh = SubResource("CylinderMesh_pedestal")
-surface_material_override/0 = SubResource("StandardMaterial3D_pedestal")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+mesh = SubResource("CylinderMesh_main_pedestal")
+surface_material_override/0 = SubResource("StandardMaterial3D_main_pedestal")
+
+[node name="PedestalGlow" type="OmniLight3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+light_color = Color(0, 0.85, 1, 1)
+light_energy = 3.2
+omni_range = 4.2
+
+[node name="SquadPedestal1" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.07, 0.25)
+mesh = SubResource("CylinderMesh_squad_pedestal")
+surface_material_override/0 = SubResource("StandardMaterial3D_squad_pedestal")
+
+[node name="InviteLabel1" type="Label3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld/SquadPedestal1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+billboard = 1
+modulate = Color(0.9, 0.95, 1, 0.85)
+text = "+"
+font_size = 48
+
+[node name="SquadPedestal2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.55, 0.07, 0.15)
+mesh = SubResource("CylinderMesh_squad_pedestal")
+surface_material_override/0 = SubResource("StandardMaterial3D_squad_pedestal")
+
+[node name="InviteLabel2" type="Label3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld/SquadPedestal2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+billboard = 1
+modulate = Color(0.9, 0.95, 1, 0.85)
+text = "+"
+font_size = 48
+
+[node name="SquadPedestal3" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 0.07, 0.35)
+mesh = SubResource("CylinderMesh_squad_pedestal")
+surface_material_override/0 = SubResource("StandardMaterial3D_squad_pedestal")
+
+[node name="InviteLabel3" type="Label3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld/SquadPedestal3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+billboard = 1
+modulate = Color(0.9, 0.95, 1, 0.85)
+text = "+"
+font_size = 48
 
 [node name="CharacterHolder" type="Node3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
-transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 1.35, 2.6)
+transform = Transform3D(1, 0, 0, 0, 0.987688, 0.156434, 0, -0.156434, 0.987688, 0, 1.3, 2.75)
 current = true
-fov = 48.0
+fov = 46.0
 
 [node name="LobbyMusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_music")
 volume_db = -4.0
 
-[node name="MainOverlay" type="Control" parent="."]
+[node name="TopBar" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
+offset_bottom = 58.0
 grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_top_bar")
 
-[node name="TopBar" type="PanelContainer" parent="MainOverlay"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -260.0
-offset_top = 16.0
-offset_right = 260.0
-offset_bottom = 85.0
-grow_horizontal = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_header")
-
-[node name="VBox" type="VBoxContainer" parent="MainOverlay/TopBar"]
+[node name="HBox" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
-alignment = 1
+theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="MainOverlay/TopBar/VBox"]
+[node name="L1Badge" type="Label" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(28, 24)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.98, 0.85, 0.1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 28
-text = "FORTNITE BATTLE ROYALE"
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 11
+text = "L1"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="MainOverlay/TopBar/VBox"]
+[node name="NavTabs" type="HBoxContainer" parent="TopBar/HBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.85, 0.9, 1, 0.85)
-theme_override_font_sizes/font_size = 12
-text = "CHAPTER 5 | 25-PLAYER ISLAND SOLO MATCH"
-horizontal_alignment = 1
+theme_override_constants/separation = 4
 
-[node name="LockerPanel" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -320.0
-offset_top = -140.0
-offset_right = 320.0
-offset_bottom = -30.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="VBox" type="VBoxContainer" parent="LockerPanel"]
+[node name="PlayBtn" type="Button" parent="TopBar/HBox/NavTabs"]
 layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="LockerHeader" type="HBoxContainer" parent="LockerPanel/VBox"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="LockerPanel/VBox/LockerHeader"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.12, 0.12, 0.12, 1)
 theme_override_font_sizes/font_size = 14
-text = "CHOOSE YOUR CHARACTER SKIN (Click to preview & select):"
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_selected")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_selected")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_selected")
+text = "PLAY"
 
-[node name="SkinList" type="HBoxContainer" parent="LockerPanel"]
+[node name="OverrideBtn" type="Button" parent="TopBar/HBox/NavTabs"]
 layout_mode = 2
-size_flags_vertical = 8
-theme_override_constants/separation = 10
-alignment = 1
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "OVERRIDE"
+flat = true
 
-[node name="MainOverlay2" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="ShopBtn" type="Button" parent="TopBar/HBox/NavTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "SHOP"
+flat = true
+
+[node name="LockerBtn" type="Button" parent="TopBar/HBox/NavTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "LOCKER"
+flat = true
+
+[node name="PassesBtn" type="Button" parent="TopBar/HBox/NavTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "PASSES"
+flat = true
+
+[node name="QuestsBtn" type="Button" parent="TopBar/HBox/NavTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "QUESTS"
+flat = true
+
+[node name="CompeteBtn" type="Button" parent="TopBar/HBox/NavTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "COMPETE"
+flat = true
+
+[node name="CareerBtn" type="Button" parent="TopBar/HBox/NavTabs"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.85)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_normal")
+text = "CAREER"
+flat = true
+
+[node name="R1Badge" type="Label" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(28, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 11
+text = "R1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="TopBar/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightControls" type="HBoxContainer" parent="TopBar/HBox"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="CurrencyPill" type="Label" parent="TopBar/HBox/RightControls"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "Ⓥ 400"
+vertical_alignment = 1
+
+[node name="AdminButton" type="Button" parent="TopBar/HBox/RightControls"]
+custom_minimum_size = Vector2(170, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 1, 1)
+theme_override_colors/font_hover_color = Color(0.6, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_admin_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_admin_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_admin_btn")
+text = "🎛 ... / admin panel"
+
+[node name="AvatarPill" type="Label" parent="TopBar/HBox/RightControls"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "👤 ●"
+vertical_alignment = 1
+
+[node name="TopLeftPromo" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 70.0
+offset_right = 260.0
+offset_bottom = 140.0
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mode_pill")
 
-[node name="BottomRight" type="VBoxContainer" parent="MainOverlay2"]
+[node name="VBox" type="VBoxContainer" parent="TopLeftPromo"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Badge" type="Label" parent="TopLeftPromo/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 0.8)
+theme_override_font_sizes/font_size = 10
+text = "[L2] FORTNITE"
+
+[node name="PromoTitle" type="Label" parent="TopLeftPromo/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "NEW SEASON LIVE NOW"
+
+[node name="PromoSub" type="Label" parent="TopLeftPromo/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 0.85)
+theme_override_font_sizes/font_size = 10
+text = "Chapter 5 Island Royale"
+
+[node name="LeftCard" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -290.0
+offset_right = 320.0
+offset_bottom = -24.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_left_card")
+
+[node name="VBox" type="VBoxContainer" parent="LeftCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GameTitle" type="Label" parent="LeftCard/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "BATTLE ROYALE"
+
+[node name="ModePill" type="Button" parent="LeftCard/VBox"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_mode_pill")
+text = "👥  Zero Build, Solo  ●"
+
+[node name="EquippedBanner" type="PanelContainer" parent="LeftCard/VBox"]
+layout_mode = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_equipped")
+
+[node name="HBox" type="HBoxContainer" parent="LeftCard/VBox/EquippedBanner"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Icon" type="Label" parent="LeftCard/VBox/EquippedBanner/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🥋"
+
+[node name="VBox" type="VBoxContainer" parent="LeftCard/VBox/EquippedBanner/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemName" type="Label" parent="LeftCard/VBox/EquippedBanner/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Kate Equipped"
+
+[node name="RarityTag" type="Label" parent="LeftCard/VBox/EquippedBanner/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "RARE  ●  Lvl 1"
+
+[node name="PlayButton" type="Button" parent="LeftCard/VBox"]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.06, 0.06, 0.06, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.12, 0.12, 0.12, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_play_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_play_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_play_btn")
+text = "PLAY"
+
+[node name="RightBadges" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -240.0
-offset_top = -150.0
-offset_right = -30.0
-offset_bottom = -30.0
+offset_left = -110.0
+offset_top = -240.0
+offset_right = -24.0
+offset_bottom = -70.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 12
 
-[node name="PlayButton" type="Button" parent="MainOverlay2/BottomRight"]
-custom_minimum_size = Vector2(210, 64)
+[node name="LvlBadge" type="Label" parent="RightBadges"]
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.12, 0.12, 0.12, 1)
-theme_override_font_sizes/font_size = 22
-theme_override_styles/normal = SubResource("StyleBoxFlat_play_btn")
-theme_override_styles/hover = SubResource("StyleBoxFlat_play_btn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_play_btn")
-text = "READY UP / PLAY"
-
-[node name="ControlsButton" type="Button" parent="MainOverlay2/BottomRight"]
-custom_minimum_size = Vector2(210, 34)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 0.9)
 theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-text = "VIEW CONTROLS"
+text = "LVL
+1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicButton" type="Button" parent="RightBadges"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_mode_pill")
+text = "♫"
+
+[node name="TeenBadge" type="Label" parent="RightBadges"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 0.8)
+theme_override_font_sizes/font_size = 9
+text = "TEEN
+Violence"
+horizontal_alignment = 2
+
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -460.0
+offset_top = -34.0
+offset_right = -24.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 16
+alignment = 2
+
+[node name="LegendLabel" type="Label" parent="BottomBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.95, 0.75)
+theme_override_font_sizes/font_size = 11
+text = "💬 Chat (Double-tap)    |    🎮 Emote (Hold)    |    ⭕ Back"
+
+[node name="AdminPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -200.0
+offset_right = 260.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_panel")
+
+[node name="VBox" type="VBoxContainer" parent="AdminPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="AdminPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "⚡ FORTNITE CHAPTER 5 ADMIN PANEL"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="AdminPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.8)
+theme_override_font_sizes/font_size = 11
+text = "Developer Cheats, God Mode & Match Control:"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="AdminPanel/VBox"]
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="AdminPanel/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="GodModeBtn" type="Button" parent="AdminPanel/VBox/Grid"]
+custom_minimum_size = Vector2(230, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "⚡ God Mode (1000 HP / Shield)"
+
+[node name="MaxMatsBtn" type="Button" parent="AdminPanel/VBox/Grid"]
+custom_minimum_size = Vector2(230, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "🪵 Max Materials (999 All)"
+
+[node name="GiveWeaponsBtn" type="Button" parent="AdminPanel/VBox/Grid"]
+custom_minimum_size = Vector2(230, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "🔫 Full Gold Weapon Loadout"
+
+[node name="KillBotsBtn" type="Button" parent="AdminPanel/VBox/Grid"]
+custom_minimum_size = Vector2(230, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "💀 Eliminate All Island Bots"
+
+[node name="LaunchBusBtn" type="Button" parent="AdminPanel/VBox/Grid"]
+custom_minimum_size = Vector2(230, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "🚎 Launch Battle Bus Match"
+
+[node name="InstantWinBtn" type="Button" parent="AdminPanel/VBox/Grid"]
+custom_minimum_size = Vector2(230, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "🏆 Instant #1 Victory Royale"
+
+[node name="CloseAdminBtn" type="Button" parent="AdminPanel/VBox"]
+custom_minimum_size = Vector2(140, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "CLOSE PANEL"
+
+[node name="LockerPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -180.0
+offset_right = 260.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_panel")
+
+[node name="VBox" type="VBoxContainer" parent="LockerPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="LockerPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.4, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "👕 LOCKER - SELECT CHARACTER SKIN"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="LockerPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 0.8)
+theme_override_font_sizes/font_size = 11
+text = "Click any character skin to preview on pedestal:"
+horizontal_alignment = 1
+
+[node name="SkinGrid" type="GridContainer" parent="LockerPanel/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="CloseLockerBtn" type="Button" parent="LockerPanel/VBox"]
+custom_minimum_size = Vector2(140, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
+text = "CLOSE LOCKER"
 
 [node name="ControlsPanel" type="PanelContainer" parent="."]
 visible = false
@@ -273,13 +791,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -210.0
-offset_right = 260.0
-offset_bottom = 210.0
+offset_left = -240.0
+offset_top = -180.0
+offset_right = 240.0
+offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_panel")
 
 [node name="VBox" type="VBoxContainer" parent="ControlsPanel"]
 layout_mode = 2
@@ -287,95 +805,68 @@ theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="ControlsPanel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.98, 0.85, 0.1, 1)
-theme_override_font_sizes/font_size = 18
-text = "BATTLE ROYALE CONTROLS"
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+text = "CONTROLS CHEATSHEET"
 horizontal_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="ControlsPanel/VBox"]
-layout_mode = 2
 
 [node name="Grid" type="GridContainer" parent="ControlsPanel/VBox"]
 layout_mode = 2
-theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 4
 columns = 2
 
-[node name="L1" type="Label" parent="ControlsPanel/VBox/Grid"]
+[node name="K1" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "W, A, S, D:"
-[node name="R1" type="Label" parent="ControlsPanel/VBox/Grid"]
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+text = "WASD:"
+[node name="V1" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-text = "Move Character"
+text = "Move"
 
-[node name="L2" type="Label" parent="ControlsPanel/VBox/Grid"]
+[node name="K2" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "SPACE:"
-[node name="R2" type="Label" parent="ControlsPanel/VBox/Grid"]
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+text = "Mouse:"
+[node name="V2" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "360-degree Camera Look"
+
+[node name="K3" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+text = "RMB (Right Mouse):"
+[node name="V3" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Aim Down Sights / Sniper Scope"
+
+[node name="K4" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+text = "Space:"
+[node name="V4" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
 text = "Jump / Deploy Glider in Air"
 
-[node name="L3" type="Label" parent="ControlsPanel/VBox/Grid"]
+[node name="K5" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "SHIFT:"
-[node name="R3" type="Label" parent="ControlsPanel/VBox/Grid"]
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+text = "1 - 5 / F:"
+[node name="V5" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-text = "Sprint"
+text = "Weapons / Pickaxe"
 
-[node name="L4" type="Label" parent="ControlsPanel/VBox/Grid"]
+[node name="K6" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "CTRL / C:"
-[node name="R4" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-text = "Crouch / Slide (Sprint+C)"
-
-[node name="L5" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "F / 1:"
-[node name="R5" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-text = "Pickaxe (Harvesting)"
-
-[node name="L6" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "2, 3, 4:"
-[node name="R6" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-text = "Assault Rifle, Shotgun, Sniper"
-
-[node name="L7" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "5, 6:"
-[node name="R7" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-text = "Shield Potion, Medkit"
-
-[node name="L8" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
 text = "Q:"
-[node name="R8" type="Label" parent="ControlsPanel/VBox/Grid"]
+[node name="V6" type="Label" parent="ControlsPanel/VBox/Grid"]
 layout_mode = 2
-text = "Toggle Building Mode (Wall, Floor, Ramp, Roof)"
+text = "Toggle Building Mode"
 
-[node name="L9" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
-text = "LMB / RMB:"
-[node name="R9" type="Label" parent="ControlsPanel/VBox/Grid"]
-layout_mode = 2
-text = "Fire / Harvest | Aim / Cycle Material"
-
-[node name="CloseControlsButton" type="Button" parent="ControlsPanel/VBox"]
-custom_minimum_size = Vector2(100, 32)
+[node name="CloseControlsBtn" type="Button" parent="ControlsPanel/VBox"]
+custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/normal = SubResource("StyleBoxFlat_modal_btn")
 text = "CLOSE"

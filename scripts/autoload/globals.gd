@@ -7,6 +7,7 @@ signal shield_changed(current: float, max_val: float)
 signal materials_changed(wood: int, stone: int, metal: int)
 signal active_slot_changed(slot_idx: int)
 signal storm_updated(radius: float, center: Vector3, phase: int, time_left: float)
+signal scoping_changed(is_scoping: bool, is_sniper: bool)
 
 enum MaterialType {
 	WOOD,
@@ -22,16 +23,19 @@ enum BuildPieceType {
 	ROOF
 }
 
-# Player Stats
+var max_health: float = 100.0
 var player_health: float = 100.0:
 	set(val):
-		player_health = clamp(val, 0.0, 100.0)
-		health_changed.emit(player_health, 100.0)
+		var upper = max(max_health, val)
+		player_health = clamp(val, 0.0, upper)
+		health_changed.emit(player_health, upper)
 
+var max_shield: float = 100.0
 var player_shield: float = 100.0:
 	set(val):
-		player_shield = clamp(val, 0.0, 100.0)
-		shield_changed.emit(player_shield, 100.0)
+		var upper = max(max_shield, val)
+		player_shield = clamp(val, 0.0, upper)
+		shield_changed.emit(player_shield, upper)
 
 # Building Resources
 var wood: int = 200:

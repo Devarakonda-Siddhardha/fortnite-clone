@@ -28,6 +28,7 @@ class_name GameHUD
 @onready var game_over_lobby_btn: Button = $CenterBanner/GameOverBanner/VBox/GameOverLobbyButton
 
 @onready var crosshair: Control = $CenterCrosshair
+@onready var sniper_scope: Control = $SniperScopeOverlay
 @onready var hotbar_container: HBoxContainer = $BottomCenter/Hotbar
 
 func _ready() -> void:
@@ -36,6 +37,7 @@ func _ready() -> void:
 	Globals.materials_changed.connect(_on_materials_changed)
 	Globals.storm_updated.connect(_on_storm_updated)
 	Globals.active_slot_changed.connect(_on_active_slot_changed)
+	Globals.scoping_changed.connect(_on_scoping_changed)
 	
 	GameManager.alive_count_changed.connect(_on_alive_count_changed)
 	GameManager.player_eliminated.connect(_on_player_eliminated)
@@ -196,3 +198,9 @@ func _on_game_over() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if game_over_banner:
 		game_over_banner.visible = true
+
+func _on_scoping_changed(is_scoping: bool, is_sniper: bool) -> void:
+	if sniper_scope:
+		sniper_scope.visible = is_scoping and is_sniper
+	if crosshair:
+		crosshair.visible = not (is_scoping and is_sniper)
