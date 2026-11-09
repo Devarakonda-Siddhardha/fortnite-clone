@@ -10,7 +10,7 @@ config/name="Fortnite Clone"
 config/description="Stylized Third-Person Battle Royale with Grid Building, Procedural Island, Storm, and Bots in Godot 4"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://icon.png"
 
 [display]
 
@@ -112,3 +112,8 @@ textures/vram_compression/import_etc2_astc=true
 
 Globals="*res://scripts/autoload/globals.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+pointing/emulate_mouse_from_touch=true

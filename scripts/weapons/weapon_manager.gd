@@ -186,16 +186,19 @@ func _process(delta: float) -> void:
 		if not is_hand_attached:
 			weapon_holder.position = weapon_holder.position.lerp(default_weapon_pos, delta * 15.0)
 	
-	# Handle reload key (R)
-	if Input.is_action_just_pressed("reload"):
+	# Handle reload key (R) or Mobile Reload
+	if Input.is_action_just_pressed("reload") or Globals.mobile_reload_pressed:
+		Globals.mobile_reload_pressed = false
 		start_reload()
 	
 	# Only fire weapons/pickaxe when NOT in building mode
 	if not Globals.is_building_mode:
 		var is_automatic = (Globals.active_slot == 1)
-		var trigger_pressed = Input.is_action_pressed("fire") if is_automatic else Input.is_action_just_pressed("fire")
+		var trigger_pressed = (Input.is_action_pressed("fire") or Globals.mobile_fire) if is_automatic else (Input.is_action_just_pressed("fire") or Globals.mobile_fire)
 		if trigger_pressed and fire_cooldown <= 0.0:
 			trigger_primary_action()
+			if not is_automatic and not Input.is_action_pressed("fire"):
+				Globals.mobile_fire = false
 
 func start_reload() -> void:
 	var slot = Globals.active_slot

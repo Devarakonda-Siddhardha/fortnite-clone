@@ -1,0 +1,372 @@
+[gd_scene load_steps=12 format=3 uid="uid://mobilecontrols001"]
+
+[ext_resource type="Script" path="res://scripts/ui/mobile_controls.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joystick_base"]
+bg_color = Color(0.06, 0.08, 0.12, 0.55)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.25, 0.65, 0.95, 0.8)
+corner_radius_top_left = 75
+corner_radius_top_right = 75
+corner_radius_bottom_right = 75
+corner_radius_bottom_left = 75
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joystick_knob"]
+bg_color = Color(0.2, 0.75, 1, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.95)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fire_btn"]
+bg_color = Color(0.95, 0.25, 0.18, 0.92)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.85, 0.5, 1)
+corner_radius_top_left = 43
+corner_radius_top_right = 43
+corner_radius_bottom_right = 43
+corner_radius_bottom_left = 43
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jump_btn"]
+bg_color = Color(0.15, 0.6, 0.95, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.85)
+corner_radius_top_left = 34
+corner_radius_top_right = 34
+corner_radius_bottom_right = 34
+corner_radius_bottom_left = 34
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aim_btn"]
+bg_color = Color(0.95, 0.75, 0.15, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.85)
+corner_radius_top_left = 33
+corner_radius_top_right = 33
+corner_radius_bottom_right = 33
+corner_radius_bottom_left = 33
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slide_btn"]
+bg_color = Color(0.2, 0.4, 0.75, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.8)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_reload_btn"]
+bg_color = Color(0.2, 0.8, 0.45, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.8)
+corner_radius_top_left = 29
+corner_radius_top_right = 29
+corner_radius_bottom_right = 29
+corner_radius_bottom_left = 29
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_interact_btn"]
+bg_color = Color(1, 0.82, 0.25, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.9)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_build_btn"]
+bg_color = Color(0.7, 0.25, 0.9, 0.88)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.8)
+corner_radius_top_left = 32
+corner_radius_top_right = 32
+corner_radius_bottom_right = 32
+corner_radius_bottom_left = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_build_piece"]
+bg_color = Color(0.15, 0.18, 0.28, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.7, 1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="MobileControls" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="JoystickBase" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = -50.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_joystick_base")
+
+[node name="JoystickKnob" type="Panel" parent="JoystickBase"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_joystick_knob")
+
+[node name="SprintIndicator" type="Label" parent="JoystickBase"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.0
+offset_top = -28.0
+offset_right = 40.0
+offset_bottom = -5.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "⚡ SPRINT"
+horizontal_alignment = 1
+
+[node name="ActionButtons" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -320.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="FireButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -115.0
+offset_top = -145.0
+offset_right = -29.0
+offset_bottom = -59.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("StyleBoxFlat_fire_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fire_btn")
+text = "🔥
+FIRE"
+
+[node name="JumpButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -205.0
+offset_top = -105.0
+offset_right = -137.0
+offset_bottom = -37.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_jump_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_jump_btn")
+text = "⬆
+JUMP"
+
+[node name="AimButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -115.0
+offset_top = -230.0
+offset_right = -49.0
+offset_bottom = -164.0
+grow_horizontal = 0
+grow_vertical = 0
+toggle_mode = true
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_aim_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_aim_btn")
+text = "🎯
+AIM"
+
+[node name="SlideButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -285.0
+offset_top = -80.0
+offset_right = -225.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_slide_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_slide_btn")
+text = "⬇
+SLIDE"
+
+[node name="ReloadButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -190.0
+offset_top = -180.0
+offset_right = -132.0
+offset_bottom = -122.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_reload_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_reload_btn")
+text = "🔄
+RELOAD"
+
+[node name="InteractButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -265.0
+offset_top = -160.0
+offset_right = -201.0
+offset_bottom = -96.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_interact_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_interact_btn")
+text = "🖐
+OPEN"
+
+[node name="BuildModeButton" type="Button" parent="ActionButtons"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -185.0
+offset_top = -255.0
+offset_right = -121.0
+offset_bottom = -191.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_build_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_build_btn")
+text = "🔨
+BUILD"
+
+[node name="BuildBar" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -140.0
+offset_right = 220.0
+offset_bottom = -90.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="WallButton" type="Button" parent="BuildBar"]
+custom_minimum_size = Vector2(75, 48)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_build_piece")
+text = "🧱 Wall"
+
+[node name="FloorButton" type="Button" parent="BuildBar"]
+custom_minimum_size = Vector2(75, 48)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_build_piece")
+text = "🟫 Floor"
+
+[node name="RampButton" type="Button" parent="BuildBar"]
+custom_minimum_size = Vector2(75, 48)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_build_piece")
+text = "📐 Ramp"
+
+[node name="RoofButton" type="Button" parent="BuildBar"]
+custom_minimum_size = Vector2(75, 48)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_build_piece")
+text = "🎪 Roof"
+
+[node name="MatCycleButton" type="Button" parent="BuildBar"]
+custom_minimum_size = Vector2(90, 48)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_build_piece")
+text = "🔄 Material"

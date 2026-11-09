@@ -67,6 +67,20 @@ func _ready() -> void:
 	_on_alive_count_changed(GameManager.players_alive)
 	
 	setup_hotbar_icons()
+	setup_mobile_toggle()
+
+func setup_mobile_toggle() -> void:
+	var toggle_btn = Button.new()
+	toggle_btn.text = "📱 Controls"
+	toggle_btn.position = Vector2(10, 10)
+	toggle_btn.custom_minimum_size = Vector2(90, 32)
+	toggle_btn.pressed.connect(func():
+		var mc = get_node_or_null("MobileControls")
+		if mc:
+			mc.visible = not mc.visible
+			Globals.mobile_controls_enabled = mc.visible
+	)
+	add_child(toggle_btn)
 
 func setup_hotbar_icons() -> void:
 	if not hotbar_container:
@@ -81,6 +95,7 @@ func setup_hotbar_icons() -> void:
 	]
 	for i in range(min(hotbar_container.get_child_count(), icon_paths.size())):
 		var slot = hotbar_container.get_child(i)
+		var slot_idx = i
 		var path = icon_paths[i]
 		if ResourceLoader.exists(path):
 			var tex = load(path)
@@ -90,10 +105,18 @@ func setup_hotbar_icons() -> void:
 			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			tr.custom_minimum_size = Vector2(36, 36)
 			slot.add_child(tr)
-			# Hide text label if present so icon shines
 			var lbl = slot.get_node_or_null("Label")
 			if lbl:
 				lbl.visible = false
+		
+		# Support touchscreen tapping directly on hotbar slots
+		slot.mouse_filter = Control.MOUSE_FILTER_PASS
+		slot.gui_input.connect(func(event):
+			if event is InputEventMouseButton and event.pressed:
+				Globals.active_slot = slot_idx
+			elif event is InputEventScreenTouch and event.pressed:
+				Globals.active_slot = slot_idx
+		)
 
 func _process(_delta: float) -> void:
 	if build_mode_panel:

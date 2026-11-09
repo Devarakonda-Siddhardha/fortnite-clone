@@ -71,6 +71,18 @@ var selected_material: MaterialType = MaterialType.WOOD
 # Selected Character Skin
 var selected_skin_path: String = "res://assets/characters/YBot.fbx"
 
+# Mobile Virtual Controls State
+var mobile_move_vector: Vector2 = Vector2.ZERO
+var mobile_sprint: bool = false
+var mobile_fire: bool = false
+var mobile_aim: bool = false
+var mobile_jump_pressed: bool = false
+var mobile_crouch_pressed: bool = false
+var mobile_reload_pressed: bool = false
+var mobile_interact_pressed: bool = false
+var mobile_controls_enabled: bool = false
+signal mobile_controls_toggled(enabled: bool)
+
 func reset_player_stats() -> void:
 	player_health = 100.0
 	player_shield = 100.0

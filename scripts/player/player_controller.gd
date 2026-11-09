@@ -51,6 +51,8 @@ var skydive_audio: AudioStreamPlayer = null
 var normal_height: float = 1.9
 var crouch_height: float = 1.2
 var mouse_released_by_esc: bool = false
+var touch_look_index: int = -1
+var touch_look_sens: float = 0.0035
 
 func _ready() -> void:
 	if spring_arm:
@@ -145,6 +147,24 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	
+	# Mobile touchscreen 360-degree camera look
+	if event is InputEventScreenTouch:
+		if event.position.x > get_viewport().get_visible_rect().size.x * 0.38:
+			if event.pressed:
+				if touch_look_index == -1:
+					touch_look_index = event.index
+			else:
+				if event.index == touch_look_index:
+					touch_look_index = -1
+	
+	if event is InputEventScreenDrag and event.index == touch_look_index:
+		var sens = touch_look_sens
+		if is_aiming:
+			sens *= 0.4 if Globals.active_slot == 3 else 0.7
+		rotate_y(-event.relative.x * sens)
+		camera_pivot.rotate_x(-event.relative.y * sens)
+		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -deg_to_rad(85.0), deg_to_rad(85.0))
+	
 	# Full 360-degree mouse look
 	if event is InputEventMouseMotion and not mouse_released_by_esc:
 		var sens = mouse_sensitivity
@@ -182,8 +202,8 @@ func _process(delta: float) -> void:
 	handle_scoping(delta)
 
 func handle_scoping(delta: float) -> void:
-	# Check if holding RMB (Aim Down Sights / Sniper Scope)
-	var wants_aim = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not Globals.is_building_mode and not is_skydiving
+	# Check if holding RMB or Mobile Aim button (Aim Down Sights / Sniper Scope)
+	var wants_aim = (Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) or Globals.mobile_aim) and not Globals.is_building_mode and not is_skydiving
 	if wants_aim != is_aiming:
 		is_aiming = wants_aim
 		var is_sniper = (Globals.active_slot == 3)
@@ -238,7 +258,10 @@ func handle_crouch_and_slide(delta: float) -> void:
 	if is_skydiving:
 		return
 	
-	if Input.is_action_just_pressed("crouch"):
+	var crouch_pressed = Input.is_action_just_pressed("crouch") or Globals.mobile_crouch_pressed
+	Globals.mobile_crouch_pressed = false
+	
+	if crouch_pressed:
 		if is_sprinting and is_on_floor() and not is_sliding:
 			# Start Slide
 			is_sliding = true
@@ -262,6 +285,11 @@ func handle_crouch_and_slide(delta: float) -> void:
 
 func handle_jump_and_glider(delta: float) -> void:
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	if Globals.mobile_move_vector != Vector2.ZERO:
+		input_dir = Globals.mobile_move_vector
+	
+	var jump_pressed = Input.is_action_just_pressed("jump") or Globals.mobile_jump_pressed
+	Globals.mobile_jump_pressed = false
 	
 	if is_on_floor():
 		if is_skydiving:
@@ -273,7 +301,7 @@ func handle_jump_and_glider(delta: float) -> void:
 			glider_mesh.visible = false
 			glider_mesh.rotation = glider_mesh.rotation.lerp(Vector3.ZERO, delta * 10.0)
 		
-		if Input.is_action_just_pressed("jump"):
+		if jump_pressed:
 			velocity.y = JUMP_VELOCITY
 			is_crouching = false
 			is_sliding = false
@@ -291,7 +319,7 @@ func handle_jump_and_glider(delta: float) -> void:
 				get_tree().create_timer(1.5).timeout.connect(asp.queue_free)
 		
 		# Toggle Glider in air
-		if Input.is_action_just_pressed("jump") and velocity.y < 0.0:
+		if jump_pressed and velocity.y < 0.0:
 			is_gliding = not is_gliding
 			if glider_mesh:
 				glider_mesh.visible = is_gliding
@@ -312,9 +340,9 @@ func handle_jump_and_glider(delta: float) -> void:
 				glider_mesh.rotation.x = lerp_angle(glider_mesh.rotation.x, target_pitch, delta * 6.0)
 		elif is_skydiving:
 			var target_fall = -22.0
-			if Input.is_action_pressed("move_forward"):
+			if Input.is_action_pressed("move_forward") or input_dir.y < -0.5:
 				target_fall = -34.0
-			elif Input.is_action_pressed("move_backward"):
+			elif Input.is_action_pressed("move_backward") or input_dir.y > 0.5:
 				target_fall = -16.0
 			velocity.y = move_toward(velocity.y, target_fall, gravity * 1.5 * delta)
 			if glider_mesh:
@@ -326,9 +354,11 @@ func handle_jump_and_glider(delta: float) -> void:
 
 func handle_movement(delta: float) -> void:
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	if Globals.mobile_move_vector != Vector2.ZERO:
+		input_dir = Globals.mobile_move_vector
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	is_sprinting = Input.is_action_pressed("sprint") and not is_crouching and input_dir.y < 0.0
+	is_sprinting = (Input.is_action_pressed("sprint") or Globals.mobile_sprint) and not is_crouching and input_dir.y < -0.1
 	
 	var current_speed = WALK_SPEED
 	if is_sliding:
@@ -340,7 +370,7 @@ func handle_movement(delta: float) -> void:
 	elif is_gliding:
 		current_speed = 17.5
 	elif is_skydiving:
-		current_speed = 22.0 if Input.is_action_pressed("move_forward") else 14.0
+		current_speed = 22.0 if (Input.is_action_pressed("move_forward") or input_dir.y < -0.5) else 14.0
 	
 	if direction:
 		velocity.x = lerp(velocity.x, direction.x * current_speed, delta * 10.0)

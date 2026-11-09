@@ -130,8 +130,8 @@ func _process(delta: float) -> void:
 	update_preview_material()
 	calculate_grid_position()
 	
-	# Turbo build input
-	if Input.is_action_pressed("fire") and place_cooldown <= 0.0:
+	# Turbo build input (Mouse Fire or Mobile Fire button)
+	if (Input.is_action_pressed("fire") or Globals.mobile_fire) and place_cooldown <= 0.0:
 		try_place_piece()
 
 func calculate_grid_position() -> void:
