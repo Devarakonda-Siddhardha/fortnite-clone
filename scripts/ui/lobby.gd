@@ -113,8 +113,22 @@ func select_skin(skin_path: String) -> void:
 		if res and res is PackedScene:
 			current_skin_instance = res.instantiate()
 			character_holder.add_child(current_skin_instance)
-			current_skin_instance.scale = Vector3(1.0, 1.0, 1.0)
-			current_skin_instance.position = Vector3(0, 0, 0)
+			
+			# Auto-normalize height to 1.80m
+			var min_y: float = 9999.0
+			var max_y: float = -9999.0
+			for m in current_skin_instance.find_children("*", "MeshInstance3D"):
+				if m is MeshInstance3D and m.mesh:
+					var aabb = m.mesh.get_aabb()
+					min_y = min(min_y, aabb.position.y)
+					max_y = max(max_y, aabb.position.y + aabb.size.y)
+			var mesh_h = max_y - min_y
+			var scale_factor = 1.0
+			if mesh_h > 0.1:
+				scale_factor = 1.80 / mesh_h
+			current_skin_instance.scale = Vector3(scale_factor, scale_factor, scale_factor)
+			var y_offset = -min_y * scale_factor if min_y < 9000.0 else 0.0
+			current_skin_instance.position = Vector3(0, y_offset, 0)
 			current_skin_instance.rotation_degrees = Vector3(0, 180, 0)
 			
 			# Setup benchmark idle animation

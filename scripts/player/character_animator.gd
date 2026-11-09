@@ -60,9 +60,23 @@ func setup_character() -> void:
 	char_node.name = "CharacterRig"
 	add_child(char_node)
 	
-	# Scale Mixamo character to match 1.8m-2.0m Fortnite character height
-	char_node.scale = Vector3(1.0, 1.0, 1.0)
-	char_node.position = Vector3(0, 0, 0)
+	# Auto-normalize height across all character skins so every model is 1.80m tall
+	var min_y: float = 9999.0
+	var max_y: float = -9999.0
+	for m in char_node.find_children("*", "MeshInstance3D"):
+		if m is MeshInstance3D and m.mesh:
+			var aabb = m.mesh.get_aabb()
+			min_y = min(min_y, aabb.position.y)
+			max_y = max(max_y, aabb.position.y + aabb.size.y)
+	
+	var mesh_h = max_y - min_y
+	var scale_factor = 1.0
+	if mesh_h > 0.1:
+		scale_factor = 1.80 / mesh_h
+	
+	char_node.scale = Vector3(scale_factor, scale_factor, scale_factor)
+	var y_offset = -min_y * scale_factor if min_y < 9000.0 else 0.0
+	char_node.position = Vector3(0, y_offset, 0)
 	# Face forward (-Z in Godot coordinates)
 	char_node.rotation_degrees = Vector3(0, 180, 0)
 	

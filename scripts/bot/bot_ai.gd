@@ -79,7 +79,10 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	if not is_on_floor():
-		velocity.y -= gravity * delta
+		if global_position.y > 15.0:
+			velocity.y = max(-5.5, velocity.y - gravity * 0.25 * delta)
+		else:
+			velocity.y -= gravity * delta
 	
 	scan_for_targets()
 	
@@ -96,7 +99,8 @@ func _physics_process(delta: float) -> void:
 	# Update 3D character animation
 	if character_animator and character_animator.has_method("update_locomotion"):
 		var horiz = Vector2(velocity.x, velocity.z).length()
-		character_animator.update_locomotion(horiz, current_state == State.FLEE_STORM, false, false)
+		var in_air_gliding = not is_on_floor() and global_position.y > 8.0
+		character_animator.update_locomotion(horiz, current_state == State.FLEE_STORM, false, in_air_gliding)
 
 func scan_for_targets() -> void:
 	var player = get_tree().get_first_node_in_group("player")
