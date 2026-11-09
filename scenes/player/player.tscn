@@ -1,0 +1,77 @@
+[gd_scene load_steps=11 format=3 uid="uid://player001"]
+
+[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/building/building_system.gd" id="2_build"]
+[ext_resource type="Script" path="res://scripts/weapons/weapon_manager.gd" id="3_weap"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.45
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_player"]
+albedo_color = Color(0.2, 0.45, 0.85, 1)
+roughness = 0.6
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+material = SubResource("StandardMaterial3D_player")
+radius = 0.45
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glider"]
+albedo_color = Color(0.9, 0.3, 0.2, 1)
+roughness = 0.5
+
+[sub_resource type="PrismMesh" id="PrismMesh_glider"]
+material = SubResource("StandardMaterial3D_glider")
+size = Vector3(3, 0.3, 2)
+
+[sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_arm"]
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 13
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_player")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.2, 0)
+shape = SubResource("SeparationRayShape3D_arm")
+spring_length = 3.2
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+current = true
+
+[node name="WeaponRayCast" type="RayCast3D" parent="CameraPivot/SpringArm3D/Camera3D"]
+target_position = Vector3(0, 0, -100)
+collision_mask = 13
+
+[node name="MantleChestRay" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+target_position = Vector3(0, 0, -1.2)
+
+[node name="MantleHeadRay" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+target_position = Vector3(0, 0, -1.2)
+
+[node name="GliderMesh" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+visible = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="GliderMesh"]
+mesh = SubResource("PrismMesh_glider")
+
+[node name="BuildingSystem" type="Node3D" parent="."]
+script = ExtResource("2_build")
+
+[node name="WeaponManager" type="Node" parent="."]
+script = ExtResource("3_weap")

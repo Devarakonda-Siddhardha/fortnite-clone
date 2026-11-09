@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://island001"]
+
+[ext_resource type="Script" path="res://scripts/environment/island_generator.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_terrain"]
+vertex_color_use_as_albedo = true
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_placeholder"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_water"]
+transparency = 1
+albedo_color = Color(0.12, 0.45, 0.8, 0.65)
+roughness = 0.15
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_water"]
+material = SubResource("StandardMaterial3D_water")
+size = Vector2(600, 600)
+
+[node name="Island" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="TerrainMesh" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_terrain")
+mesh = SubResource("BoxMesh_placeholder")
+
+[node name="TerrainStaticBody" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="TerrainCollisionShape" type="CollisionShape3D" parent="TerrainStaticBody"]
+
+[node name="WaterMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_water")
+
+[node name="PropsContainer" type="Node3D" parent="."]

@@ -1,0 +1,345 @@
+[gd_scene load_steps=6 format=3 uid="uid://hud001"]
+
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_bg"]
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fill"]
+bg_color = Color(0.2, 0.85, 0.3, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shield_fill"]
+bg_color = Color(0.15, 0.55, 0.95, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.08, 0.12, 0.75)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="CenterCrosshair" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ReticleDot" type="ColorRect" parent="CenterCrosshair"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.85)
+
+[node name="BottomLeft" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -100.0
+offset_right = 280.0
+offset_bottom = -24.0
+grow_vertical = 0
+
+[node name="BarsContainer" type="VBoxContainer" parent="BottomLeft"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="ShieldBar" type="ProgressBar" parent="BottomLeft/BarsContainer"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_shield_fill")
+value = 100.0
+show_percentage = false
+
+[node name="ShieldLabel" type="Label" parent="BottomLeft/BarsContainer/ShieldBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 14
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HealthBar" type="ProgressBar" parent="BottomLeft/BarsContainer"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_health_fill")
+value = 100.0
+show_percentage = false
+
+[node name="HealthLabel" type="Label" parent="BottomLeft/BarsContainer/HealthBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 14
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BottomRight" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = -140.0
+offset_right = -32.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Materials" type="HBoxContainer" parent="BottomRight"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -34.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="WoodContainer" type="PanelContainer" parent="BottomRight/Materials"]
+custom_minimum_size = Vector2(68, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="WoodLabel" type="Label" parent="BottomRight/Materials/WoodContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "200"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StoneContainer" type="PanelContainer" parent="BottomRight/Materials"]
+custom_minimum_size = Vector2(68, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="StoneLabel" type="Label" parent="BottomRight/Materials/StoneContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "150"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MetalContainer" type="PanelContainer" parent="BottomRight/Materials"]
+custom_minimum_size = Vector2(68, 30)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MetalLabel" type="Label" parent="BottomRight/Materials/MetalContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BuildModeHint" type="PanelContainer" parent="BottomRight"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 54.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="BottomRight/BuildModeHint"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 4
+
+[node name="PieceLabel" type="Label" parent="BottomRight/BuildModeHint/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "[Q] Wall | Wood (10)
+[RMB] Cycle Material"
+horizontal_alignment = 1
+
+[node name="BottomCenter" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -64.0
+offset_right = 160.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Hotbar" type="HBoxContainer" parent="BottomCenter"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Slot0" type="PanelContainer" parent="BottomCenter/Hotbar"]
+custom_minimum_size = Vector2(46, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="BottomCenter/Hotbar/Slot0"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "[F] Pick"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot1" type="PanelContainer" parent="BottomCenter/Hotbar"]
+custom_minimum_size = Vector2(46, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="BottomCenter/Hotbar/Slot1"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "[1] AR"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot2" type="PanelContainer" parent="BottomCenter/Hotbar"]
+custom_minimum_size = Vector2(46, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="BottomCenter/Hotbar/Slot2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "[2] Shot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot3" type="PanelContainer" parent="BottomCenter/Hotbar"]
+custom_minimum_size = Vector2(46, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="BottomCenter/Hotbar/Slot3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "[3] Snip"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot4" type="PanelContainer" parent="BottomCenter/Hotbar"]
+custom_minimum_size = Vector2(46, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="BottomCenter/Hotbar/Slot4"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "[4] Pot"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot5" type="PanelContainer" parent="BottomCenter/Hotbar"]
+custom_minimum_size = Vector2(46, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Label" type="Label" parent="BottomCenter/Hotbar/Slot5"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "[5] Med"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TopCenter" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = 20.0
+offset_right = 120.0
+offset_bottom = 74.0
+grow_horizontal = 2
+
+[node name="StormInfo" type="VBoxContainer" parent="TopCenter"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 2
+
+[node name="PhaseLabel" type="Label" parent="TopCenter/StormInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.45, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "STORM PHASE 1"
+horizontal_alignment = 1
+
+[node name="TimerLabel" type="Label" parent="TopCenter/StormInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "01:00"
+horizontal_alignment = 1
