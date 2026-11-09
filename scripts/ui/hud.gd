@@ -24,6 +24,8 @@ class_name GameHUD
 
 @onready var victory_banner: PanelContainer = $CenterBanner/VictoryBanner
 @onready var game_over_banner: PanelContainer = $CenterBanner/GameOverBanner
+@onready var victory_lobby_btn: Button = $CenterBanner/VictoryBanner/VBox/VictoryLobbyButton
+@onready var game_over_lobby_btn: Button = $CenterBanner/GameOverBanner/VBox/GameOverLobbyButton
 
 @onready var crosshair: Control = $CenterCrosshair
 @onready var hotbar_container: HBoxContainer = $BottomCenter/Hotbar
@@ -39,7 +41,15 @@ func _ready() -> void:
 	GameManager.player_eliminated.connect(_on_player_eliminated)
 	GameManager.victory_royale.connect(_on_victory_royale)
 	GameManager.game_over.connect(_on_game_over)
+	GameManager.match_started.connect(_on_match_started)
+	GameManager.return_to_lobby.connect(_on_return_to_lobby)
 	
+	if victory_lobby_btn:
+		victory_lobby_btn.pressed.connect(func(): GameManager.go_to_lobby())
+	if game_over_lobby_btn:
+		game_over_lobby_btn.pressed.connect(func(): GameManager.go_to_lobby())
+	
+	visible = GameManager.is_in_match
 	if victory_banner: victory_banner.visible = false
 	if game_over_banner: game_over_banner.visible = false
 	
@@ -139,11 +149,11 @@ func _on_player_eliminated(victim: String, killer: String, weapon: String) -> vo
 	if killfeed_container:
 		var feed_label = Label.new()
 		feed_label.text = "%s eliminated %s (%s)" % [killer, victim, weapon]
-		feed_label.theme_override_font_sizes.font_size = 12
+		feed_label.add_theme_font_size_override("font_size", 12)
 		if killer == "Player":
-			feed_label.theme_override_colors.font_color = Color(0.4, 1.0, 0.4)
+			feed_label.add_theme_color_override("font_color", Color(0.4, 1.0, 0.4))
 		else:
-			feed_label.theme_override_colors.font_color = Color(0.9, 0.9, 0.9, 0.8)
+			feed_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9, 0.8))
 		killfeed_container.add_child(feed_label)
 		
 		# Fade and remove after 4.5 seconds
@@ -152,7 +162,22 @@ func _on_player_eliminated(victim: String, killer: String, weapon: String) -> vo
 				feed_label.queue_free()
 		)
 
+func _on_match_started() -> void:
+	visible = true
+	if victory_banner: victory_banner.visible = false
+	if game_over_banner: game_over_banner.visible = false
+	_on_health_changed(Globals.player_health, 100.0)
+	_on_shield_changed(Globals.player_shield, 100.0)
+	_on_materials_changed(Globals.wood, Globals.stone, Globals.metal)
+	_on_alive_count_changed(GameManager.players_alive)
+
+func _on_return_to_lobby() -> void:
+	visible = false
+	if victory_banner: victory_banner.visible = false
+	if game_over_banner: game_over_banner.visible = false
+
 func _on_victory_royale() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if victory_banner:
 		victory_banner.visible = true
 		victory_banner.scale = Vector2(0.5, 0.5)
@@ -168,5 +193,6 @@ func _on_victory_royale() -> void:
 			asp.play()
 
 func _on_game_over() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if game_over_banner:
 		game_over_banner.visible = true

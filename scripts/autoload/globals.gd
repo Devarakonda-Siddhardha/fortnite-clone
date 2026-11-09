@@ -62,6 +62,18 @@ var is_building_mode: bool = false
 var selected_build_piece: BuildPieceType = BuildPieceType.WALL
 var selected_material: MaterialType = MaterialType.WOOD
 
+# Selected Character Skin
+var selected_skin_path: String = "res://assets/characters/YBot.fbx"
+
+func reset_player_stats() -> void:
+	player_health = 100.0
+	player_shield = 100.0
+	wood = 200
+	stone = 150
+	metal = 100
+	active_slot = 0
+	is_building_mode = false
+
 func can_afford_build(mat_type: MaterialType = selected_material) -> bool:
 	match mat_type:
 		MaterialType.WOOD:

@@ -1,0 +1,381 @@
+[gd_scene load_steps=12 format=3 uid="uid://lobby001"]
+
+[ext_resource type="Script" path="res://scripts/ui/lobby.gd" id="1_lobby"]
+[ext_resource type="AudioStream" path="res://assets/audio/lobby_music.mp3" id="2_music"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_lobby"]
+sky_top_color = Color(0.18, 0.25, 0.45, 1)
+sky_horizon_color = Color(0.35, 0.4, 0.6, 1)
+ground_bottom_color = Color(0.1, 0.12, 0.2, 1)
+ground_horizon_color = Color(0.25, 0.3, 0.45, 1)
+
+[sub_resource type="Sky" id="Sky_lobby"]
+sky_material = SubResource("ProceduralSkyMaterial_lobby")
+
+[sub_resource type="Environment" id="Environment_lobby"]
+background_mode = 2
+sky = SubResource("Sky_lobby")
+ambient_light_source = 2
+ambient_light_color = Color(0.6, 0.7, 0.9, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 2
+glow_enabled = true
+glow_bloom = 0.2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pedestal"]
+top_radius = 1.2
+bottom_radius = 1.4
+height = 0.3
+radial_segments = 36
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pedestal"]
+albedo_color = Color(0.12, 0.15, 0.22, 1)
+metallic = 0.8
+roughness = 0.3
+emission_enabled = true
+emission = Color(0.15, 0.5, 0.9, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
+bg_color = Color(0.06, 0.08, 0.14, 0.85)
+border_width_bottom = 3
+border_color = Color(0.95, 0.8, 0.1, 1)
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.1, 0.16, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.5, 0.8, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_play_btn"]
+bg_color = Color(0.96, 0.78, 0.08, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.15, 0.22, 0.35, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.6, 0.9, 0.7)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_lobby")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+own_world_3d = true
+handle_input_locally = false
+size = Vector2i(1280, 720)
+render_target_update_mode = 3
+
+[node name="ShowcaseWorld" type="Node3D" parent="SubViewportContainer/SubViewport"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+environment = SubResource("Environment_lobby")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 8, 4)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="PedestalGlow" type="OmniLight3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+light_color = Color(0.2, 0.7, 1, 1)
+light_energy = 2.5
+omni_range = 4.0
+
+[node name="PedestalMesh" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+mesh = SubResource("CylinderMesh_pedestal")
+surface_material_override/0 = SubResource("StandardMaterial3D_pedestal")
+
+[node name="CharacterHolder" type="Node3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/ShowcaseWorld"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 1.35, 2.6)
+current = true
+fov = 48.0
+
+[node name="LobbyMusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_music")
+volume_db = -4.0
+
+[node name="MainOverlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopBar" type="PanelContainer" parent="MainOverlay"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -260.0
+offset_top = 16.0
+offset_right = 260.0
+offset_bottom = 85.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+
+[node name="VBox" type="VBoxContainer" parent="MainOverlay/TopBar"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="MainOverlay/TopBar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.85, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 28
+text = "FORTNITE BATTLE ROYALE"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MainOverlay/TopBar/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 0.85)
+theme_override_font_sizes/font_size = 12
+text = "CHAPTER 5 | 25-PLAYER ISLAND SOLO MATCH"
+horizontal_alignment = 1
+
+[node name="LockerPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -140.0
+offset_right = 320.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="LockerPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LockerHeader" type="HBoxContainer" parent="LockerPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LockerPanel/VBox/LockerHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "CHOOSE YOUR CHARACTER SKIN (Click to preview & select):"
+
+[node name="SkinList" type="HBoxContainer" parent="LockerPanel"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="MainOverlay2" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BottomRight" type="VBoxContainer" parent="MainOverlay2"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -150.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 12
+
+[node name="PlayButton" type="Button" parent="MainOverlay2/BottomRight"]
+custom_minimum_size = Vector2(210, 64)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.08, 0.08, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0.12, 0.12, 0.12, 1)
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_play_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_play_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_play_btn")
+text = "READY UP / PLAY"
+
+[node name="ControlsButton" type="Button" parent="MainOverlay2/BottomRight"]
+custom_minimum_size = Vector2(210, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "VIEW CONTROLS"
+
+[node name="ControlsPanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -210.0
+offset_right = 260.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="ControlsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="ControlsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.85, 0.1, 1)
+theme_override_font_sizes/font_size = 18
+text = "BATTLE ROYALE CONTROLS"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ControlsPanel/VBox"]
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="ControlsPanel/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="L1" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "W, A, S, D:"
+[node name="R1" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Move Character"
+
+[node name="L2" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "SPACE:"
+[node name="R2" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Jump / Deploy Glider in Air"
+
+[node name="L3" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "SHIFT:"
+[node name="R3" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Sprint"
+
+[node name="L4" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "CTRL / C:"
+[node name="R4" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Crouch / Slide (Sprint+C)"
+
+[node name="L5" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "F / 1:"
+[node name="R5" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Pickaxe (Harvesting)"
+
+[node name="L6" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "2, 3, 4:"
+[node name="R6" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Assault Rifle, Shotgun, Sniper"
+
+[node name="L7" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "5, 6:"
+[node name="R7" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Shield Potion, Medkit"
+
+[node name="L8" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "Q:"
+[node name="R8" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Toggle Building Mode (Wall, Floor, Ramp, Roof)"
+
+[node name="L9" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+text = "LMB / RMB:"
+[node name="R9" type="Label" parent="ControlsPanel/VBox/Grid"]
+layout_mode = 2
+text = "Fire / Harvest | Aim / Cycle Material"
+
+[node name="CloseControlsButton" type="Button" parent="ControlsPanel/VBox"]
+custom_minimum_size = Vector2(100, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "CLOSE"

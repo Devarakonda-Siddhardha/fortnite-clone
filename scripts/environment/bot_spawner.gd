@@ -14,9 +14,17 @@ const BOT_NAMES = [
 ]
 
 func _ready() -> void:
-	call_deferred("spawn_all_bots")
+	GameManager.match_started.connect(spawn_all_bots)
+	GameManager.return_to_lobby.connect(clear_all_bots)
+	if GameManager.is_in_match:
+		call_deferred("spawn_all_bots")
+
+func clear_all_bots() -> void:
+	for c in get_children():
+		c.queue_free()
 
 func spawn_all_bots() -> void:
+	clear_all_bots()
 	if not bot_scene:
 		return
 	

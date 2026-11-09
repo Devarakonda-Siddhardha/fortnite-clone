@@ -2,7 +2,7 @@ extends CharacterBody3D
 class_name PlayerController
 
 ## Fortnite-Style Third-Person Character Controller
-## Implements: Walk, Sprint, Slide, Crouch, Jump, Glider, Mantle, and Camera Rig
+## Implements: Walk, Sprint, Slide, Crouch, Jump, Glider, Mantle, and Third-Person Camera
 
 # Movement Constants
 const WALK_SPEED: float = 6.0
@@ -32,23 +32,59 @@ var is_gliding: bool = false
 @onready var glider_mesh: Node3D = $GliderMesh
 @onready var weapon_raycast: RayCast3D = $CameraPivot/SpringArm3D/Camera3D/WeaponRayCast
 @onready var building_system: Node3D = $BuildingSystem
-
-@onready var character_animator: Node3D = $CharacterAnimator
+@onready var character_animator: CharacterAnimator = $CharacterAnimator
 @onready var sfx_glider: AudioStream = preload("res://assets/audio/glider_open.mp3")
 
 # Mantle detection raycasts
 @onready var mantle_chest_ray: RayCast3D = $MantleChestRay
 @onready var mantle_head_ray: RayCast3D = $MantleHeadRay
 
-var normal_height: float = 2.0
+var normal_height: float = 1.9
 var crouch_height: float = 1.2
 
 func _ready() -> void:
+	if spring_arm:
+		spring_arm.add_excluded_object(get_rid())
+		spring_arm.collision_mask = 1
+	
+	GameManager.match_started.connect(_on_match_started)
+	GameManager.return_to_lobby.connect(_on_return_to_lobby)
+	
+	if not GameManager.is_in_match:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	if glider_mesh:
+		glider_mesh.visible = false
+	if mesh_instance:
+		mesh_instance.visible = false
+
+func _on_match_started() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	global_position = Vector3(0, 42.0, 0) # High altitude drop into island
+	velocity = Vector3(0, -3.0, 0)
+	is_gliding = true
+	if glider_mesh:
+		glider_mesh.visible = true
+	
+	Globals.reset_player_stats()
+	
+	if character_animator:
+		character_animator.setup_character()
+
+func _on_return_to_lobby() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	global_position = Vector3(0, 5.0, 0)
+	velocity = Vector3.ZERO
+	is_gliding = false
 	if glider_mesh:
 		glider_mesh.visible = false
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not GameManager.is_in_match:
+		return
+	
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		# Rotate body horizontally (Yaw)
 		rotate_y(-event.relative.x * mouse_sensitivity)
@@ -83,6 +119,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		Globals.is_building_mode = false
 
 func _physics_process(delta: float) -> void:
+	if not GameManager.is_in_match:
+		if character_animator and character_animator.has_method("update_locomotion"):
+			character_animator.update_locomotion(0.0, false, false, false)
+		return
+	
 	handle_crouch_and_slide(delta)
 	handle_jump_and_glider(delta)
 	handle_movement(delta)
@@ -116,11 +157,6 @@ func handle_crouch_and_slide(delta: float) -> void:
 	if shape:
 		shape.height = lerp(shape.height, target_h, delta * 12.0)
 		collision_shape.position.y = shape.height / 2.0
-	
-	if mesh_instance:
-		var target_scale_y = 0.6 if is_crouching else 1.0
-		mesh_instance.scale.y = lerp(mesh_instance.scale.y, target_scale_y, delta * 12.0)
-		mesh_instance.position.y = 0.6 if is_crouching else 1.0
 
 func handle_jump_and_glider(delta: float) -> void:
 	if is_on_floor():
@@ -175,10 +211,8 @@ func handle_movement(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, current_speed * delta * 8.0)
 
 func handle_mantle() -> void:
-	# Mantle: Chest hits obstacle but Head ray is clear
 	if not is_on_floor() and velocity.y > -2.0:
 		if mantle_chest_ray and mantle_chest_ray.is_colliding():
 			if mantle_head_ray and not mantle_head_ray.is_colliding():
-				# Pull character up
 				velocity.y = 6.0
 				velocity += -transform.basis.z * 3.0

@@ -22,7 +22,28 @@ const PHASE_DPS = [1.0, 2.0, 3.0, 5.0, 10.0]
 var damage_tick_timer: float = 0.0
 
 func _ready() -> void:
+	GameManager.match_started.connect(_on_match_started)
+	GameManager.return_to_lobby.connect(_on_return_to_lobby)
+	if GameManager.is_in_match:
+		start_phase(1)
+	else:
+		reset_storm()
+
+func reset_storm() -> void:
+	current_phase = 1
+	current_radius = 350.0
+	target_radius = 350.0
+	current_center = Vector3.ZERO
+	target_center = Vector3.ZERO
+	if storm_mesh:
+		storm_mesh.global_position = current_center
+		storm_mesh.scale = Vector3(current_radius * 2.0, 80.0, current_radius * 2.0)
+
+func _on_match_started() -> void:
 	start_phase(1)
+
+func _on_return_to_lobby() -> void:
+	reset_storm()
 
 func start_phase(phase: int) -> void:
 	current_phase = phase
@@ -54,6 +75,8 @@ func start_phase(phase: int) -> void:
 			target_center = current_center + Vector3(cos(rand_angle) * rand_dist, 0, sin(rand_angle) * rand_dist)
 
 func _process(delta: float) -> void:
+	if not GameManager.is_in_match:
+		return
 	phase_timer -= delta
 	if phase_timer <= 0.0:
 		start_phase(current_phase + 1)

@@ -6,8 +6,8 @@
 [ext_resource type="Script" path="res://scripts/player/character_animator.gd" id="4_anim"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
-radius = 0.45
-height = 2.0
+radius = 0.4
+height = 1.9
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_player"]
 albedo_color = Color(0.2, 0.45, 0.85, 1)
@@ -15,16 +15,19 @@ roughness = 0.6
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
 material = SubResource("StandardMaterial3D_player")
-radius = 0.45
-height = 2.0
+radius = 0.4
+height = 1.9
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glider"]
-albedo_color = Color(0.9, 0.3, 0.2, 1)
-roughness = 0.5
+albedo_color = Color(0.95, 0.35, 0.1, 1)
+roughness = 0.4
+emission_enabled = true
+emission = Color(0.9, 0.3, 0.1, 1)
+emission_energy_multiplier = 0.4
 
 [sub_resource type="PrismMesh" id="PrismMesh_glider"]
 material = SubResource("StandardMaterial3D_glider")
-size = Vector3(3, 0.3, 2)
+size = Vector3(2.8, 0.25, 1.8)
 
 [sub_resource type="SeparationRayShape3D" id="SeparationRayShape3D_arm"]
 
@@ -34,26 +37,30 @@ collision_mask = 13
 script = ExtResource("1_script")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
 shape = SubResource("CapsuleShape3D_player")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_player")
 
 [node name="CharacterAnimator" type="Node3D" parent="."]
 script = ExtResource("4_anim")
 
 [node name="CameraPivot" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0.2, 0)
+collision_mask = 1
 shape = SubResource("SeparationRayShape3D_arm")
-spring_length = 3.2
+spring_length = 2.8
+margin = 0.15
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
 current = true
+fov = 75.0
 
 [node name="WeaponRayCast" type="RayCast3D" parent="CameraPivot/SpringArm3D/Camera3D"]
 target_position = Vector3(0, 0, -100)
@@ -68,7 +75,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
 target_position = Vector3(0, 0, -1.2)
 
 [node name="GliderMesh" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
 visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="GliderMesh"]

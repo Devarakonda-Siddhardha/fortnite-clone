@@ -49,15 +49,51 @@ func _ready() -> void:
 
 func setup_held_weapon() -> void:
 	if not player:
+		player = get_parent() as CharacterBody3D
+	if not player:
 		return
+	
+	var anim = player.get_node_or_null("CharacterAnimator")
+	if anim:
+		if not anim.is_node_ready():
+			await anim.ready
+		if anim.has_signal("character_ready") and not anim.character_ready.is_connected(_on_character_ready):
+			anim.character_ready.connect(_on_character_ready)
+		var hand = anim.get_hand_holder()
+		if hand and hand != anim:
+			_attach_to_holder(hand)
+			return
+	
 	var cam = player.get_node_or_null("CameraPivot/SpringArm3D/Camera3D")
 	if cam:
+		_attach_to_holder(cam)
+
+func _on_character_ready() -> void:
+	if not player:
+		return
+	var anim = player.get_node_or_null("CharacterAnimator")
+	if anim:
+		var hand = anim.get_hand_holder()
+		if hand:
+			_attach_to_holder(hand)
+
+func _attach_to_holder(holder_node: Node3D) -> void:
+	if not holder_node:
+		return
+	if weapon_holder and is_instance_valid(weapon_holder):
+		if weapon_holder.get_parent() == holder_node:
+			return
+		weapon_holder.reparent(holder_node)
+	else:
 		weapon_holder = Node3D.new()
 		weapon_holder.name = "HeldWeaponHolder"
-		cam.add_child(weapon_holder)
-		weapon_holder.position = default_weapon_pos
-		Globals.active_slot_changed.connect(_on_slot_changed)
-		update_held_weapon(Globals.active_slot)
+		holder_node.add_child(weapon_holder)
+		if not Globals.active_slot_changed.is_connected(_on_slot_changed):
+			Globals.active_slot_changed.connect(_on_slot_changed)
+	
+	weapon_holder.position = Vector3(0, 0, 0)
+	weapon_holder.rotation_degrees = Vector3.ZERO
+	update_held_weapon(Globals.active_slot)
 
 func _on_slot_changed(slot_idx: int) -> void:
 	update_held_weapon(slot_idx)

@@ -426,20 +426,32 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -220.0
-offset_top = -50.0
+offset_top = -70.0
 offset_right = 220.0
-offset_bottom = 50.0
+offset_bottom = 70.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_victory")
 
-[node name="Label" type="Label" parent="CenterBanner/VictoryBanner"]
+[node name="VBox" type="VBoxContainer" parent="CenterBanner/VictoryBanner"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Label" type="Label" parent="CenterBanner/VictoryBanner/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
 theme_override_font_sizes/font_size = 32
 text = "#1 VICTORY ROYALE"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="VictoryLobbyButton" type="Button" parent="CenterBanner/VictoryBanner/VBox"]
+custom_minimum_size = Vector2(160, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
+text = "RETURN TO LOBBY"
 
 [node name="GameOverBanner" type="PanelContainer" parent="CenterBanner"]
 visible = false
@@ -450,16 +462,28 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -160.0
-offset_top = -40.0
+offset_top = -60.0
 offset_right = 160.0
-offset_bottom = 40.0
+offset_bottom = 60.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_gameover")
 
-[node name="Label" type="Label" parent="CenterBanner/GameOverBanner"]
+[node name="VBox" type="VBoxContainer" parent="CenterBanner/GameOverBanner"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Label" type="Label" parent="CenterBanner/GameOverBanner/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "ELIMINATED"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="GameOverLobbyButton" type="Button" parent="CenterBanner/GameOverBanner/VBox"]
+custom_minimum_size = Vector2(160, 34)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 14
+text = "RETURN TO LOBBY"
