@@ -1,15 +1,15 @@
 extends StaticBody3D
 class_name DestructibleProp
 
-## Breakable world object (Trees, Rocks, Crates, Furniture)
+## Breakable world object using authentic 3D .glb models
 
-@export var max_health: float = 100.0
+@export var max_health: float = 120.0
 @export var material_type: Globals.MaterialType = Globals.MaterialType.WOOD
-@export var material_yield_on_destroy: int = 25
+@export var material_yield_on_destroy: int = 30
+@export var glb_model_path: String = ""
 
-var current_health: float = 100.0
-
-@onready var mesh: MeshInstance3D = $MeshInstance3D
+var current_health: float = 120.0
+var model_node: Node3D = null
 
 func _ready() -> void:
 	current_health = max_health
@@ -20,17 +20,27 @@ func _ready() -> void:
 		add_to_group("rock")
 	elif material_type == Globals.MaterialType.METAL:
 		add_to_group("metal")
+	
+	if glb_model_path != "" and ResourceLoader.exists(glb_model_path):
+		var glb_res = load(glb_model_path)
+		if glb_res is PackedScene:
+			model_node = glb_res.instantiate()
+			add_child(model_node)
+			# Hide primitive placeholder if present
+			for child in get_children():
+				if child is MeshInstance3D and child != model_node:
+					child.visible = false
 
 func take_damage(amount: float) -> void:
 	current_health -= amount
 	
-	# Squash & stretch / wobble feedback on hit
-	if mesh:
-		var orig_scale = mesh.scale
-		mesh.scale = orig_scale * Vector3(1.1, 0.85, 1.1)
-		get_tree().create_timer(0.08).timeout.connect(func():
-			if is_instance_valid(mesh):
-				mesh.scale = orig_scale
+	# Hit wobble feedback
+	if model_node:
+		var orig_scale = model_node.scale
+		model_node.scale = orig_scale * Vector3(1.08, 0.9, 1.08)
+		get_tree().create_timer(0.07).timeout.connect(func():
+			if is_instance_valid(model_node):
+				model_node.scale = orig_scale
 		)
 	
 	if current_health <= 0.0:
@@ -38,5 +48,4 @@ func take_damage(amount: float) -> void:
 
 func destroy_prop() -> void:
 	Globals.add_material(material_type, material_yield_on_destroy)
-	# Clean despawn / fragmentation
 	queue_free()

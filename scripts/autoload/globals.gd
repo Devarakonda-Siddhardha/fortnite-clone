@@ -103,3 +103,7 @@ func apply_damage(amount: float, bypass_shield: bool = false) -> void:
 			var remainder = amount - player_shield
 			player_shield = 0.0
 			player_health -= remainder
+	
+	if player_health <= 0.0:
+		if not GameManager.is_player_eliminated:
+			GameManager.register_player_death("Storm" if bypass_shield else "Bot")

@@ -1,0 +1,37 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://d2nb3n18by0n7"
+path="res://.godot/imported/Michelle_3.png-e39bb4772c9d95d789172ce9ab674794.ctex"
+metadata={
+"vram_texture": false
+}
+generator_parameters={
+"md5": "7a2b1388c6bab174783b3fdc24ad5b55"
+}
+
+[deps]
+
+source_file="res://assets/characters/Michelle_3.png"
+dest_files=["res://.godot/imported/Michelle_3.png-e39bb4772c9d95d789172ce9ab674794.ctex"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=1

@@ -1,7 +1,7 @@
 extends Control
 class_name GameHUD
 
-## Fortnite-Style UI: Health, Shield, Materials, Storm Timer, Hotbar, and Reticle
+## Fortnite-Style UI: Health, Shield, Materials, Storm Timer, Hotbar, Killfeed, and Victory Royale
 
 @onready var health_bar: ProgressBar = $BottomLeft/BarsContainer/HealthBar
 @onready var health_label: Label = $BottomLeft/BarsContainer/HealthBar/HealthLabel
@@ -18,6 +18,13 @@ class_name GameHUD
 @onready var storm_timer_label: Label = $TopCenter/StormInfo/TimerLabel
 @onready var storm_phase_label: Label = $TopCenter/StormInfo/PhaseLabel
 
+@onready var alive_label: Label = $TopRight/MatchStats/AliveLabel
+@onready var elims_label: Label = $TopRight/MatchStats/ElimsLabel
+@onready var killfeed_container: VBoxContainer = $TopRight/KillFeed
+
+@onready var victory_banner: PanelContainer = $CenterBanner/VictoryBanner
+@onready var game_over_banner: PanelContainer = $CenterBanner/GameOverBanner
+
 @onready var crosshair: Control = $CenterCrosshair
 @onready var hotbar_container: HBoxContainer = $BottomCenter/Hotbar
 
@@ -28,9 +35,18 @@ func _ready() -> void:
 	Globals.storm_updated.connect(_on_storm_updated)
 	Globals.active_slot_changed.connect(_on_active_slot_changed)
 	
+	GameManager.alive_count_changed.connect(_on_alive_count_changed)
+	GameManager.player_eliminated.connect(_on_player_eliminated)
+	GameManager.victory_royale.connect(_on_victory_royale)
+	GameManager.game_over.connect(_on_game_over)
+	
+	if victory_banner: victory_banner.visible = false
+	if game_over_banner: game_over_banner.visible = false
+	
 	_on_health_changed(Globals.player_health, 100.0)
 	_on_shield_changed(Globals.player_shield, 100.0)
 	_on_materials_changed(Globals.wood, Globals.stone, Globals.metal)
+	_on_alive_count_changed(GameManager.players_alive)
 
 func _process(_delta: float) -> void:
 	if build_mode_panel:
@@ -49,12 +65,12 @@ func _process(_delta: float) -> void:
 				Globals.MaterialType.METAL: m_name = "Metal (10)"
 			build_piece_label.text = "%s | %s\n[RMB] Cycle Material" % [p_name, m_name]
 
-func _on_health_changed(current: float, max_val: float) -> void:
+func _on_health_changed(current: float, _max_val: float) -> void:
 	if health_bar:
 		health_bar.value = current
 		health_label.text = "%d" % int(current)
 
-func _on_shield_changed(current: float, max_val: float) -> void:
+func _on_shield_changed(current: float, _max_val: float) -> void:
 	if shield_bar:
 		shield_bar.value = current
 		shield_label.text = "%d" % int(current)
@@ -79,6 +95,41 @@ func _on_active_slot_changed(slot_idx: int) -> void:
 		var slot_panel = hotbar_container.get_child(i) as PanelContainer
 		if slot_panel:
 			if i == slot_idx:
-				slot_panel.modulate = Color(1.2, 1.2, 0.4, 1.0) # Active slot highlight
+				slot_panel.modulate = Color(1.25, 1.25, 0.35, 1.0)
 			else:
 				slot_panel.modulate = Color(1.0, 1.0, 1.0, 0.75)
+
+func _on_alive_count_changed(count: int) -> void:
+	if alive_label:
+		alive_label.text = "%d ALIVE" % count
+	if elims_label:
+		elims_label.text = "%d ELIMS" % GameManager.player_kills
+
+func _on_player_eliminated(victim: String, killer: String, weapon: String) -> void:
+	_on_alive_count_changed(GameManager.players_alive)
+	if killfeed_container:
+		var feed_label = Label.new()
+		feed_label.text = "%s eliminated %s (%s)" % [killer, victim, weapon]
+		feed_label.theme_override_font_sizes.font_size = 12
+		if killer == "Player":
+			feed_label.theme_override_colors.font_color = Color(0.4, 1.0, 0.4)
+		else:
+			feed_label.theme_override_colors.font_color = Color(0.9, 0.9, 0.9, 0.8)
+		killfeed_container.add_child(feed_label)
+		
+		# Fade and remove after 4.5 seconds
+		get_tree().create_timer(4.5).timeout.connect(func():
+			if is_instance_valid(feed_label):
+				feed_label.queue_free()
+		)
+
+func _on_victory_royale() -> void:
+	if victory_banner:
+		victory_banner.visible = true
+		victory_banner.scale = Vector2(0.5, 0.5)
+		var tween = create_tween()
+		tween.tween_property(victory_banner, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _on_game_over() -> void:
+	if game_over_banner:
+		game_over_banner.visible = true

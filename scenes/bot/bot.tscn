@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://bot001"]
+
+[ext_resource type="Script" path="res://scripts/bot/bot_ai.gd" id="1_script"]
+[ext_resource type="AudioStream" path="res://assets/audio/assault_rifle.wav" id="2_sound"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bot"]
+radius = 0.45
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bot"]
+albedo_color = Color(0.85, 0.35, 0.15, 1)
+roughness = 0.6
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_bot"]
+material = SubResource("StandardMaterial3D_bot")
+radius = 0.45
+height = 2.0
+
+[node name="Bot" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 11
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_bot")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_bot")
+
+[node name="VisionRayCast" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+target_position = Vector3(0, 0, -45)
+collision_mask = 3
+
+[node name="ShootSound" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+stream = ExtResource("2_sound")
+max_distance = 65.0

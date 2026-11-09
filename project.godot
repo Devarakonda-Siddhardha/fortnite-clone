@@ -111,3 +111,4 @@ textures/vram_compression/import_etc2_astc=true
 [autoload]
 
 Globals="*res://scripts/autoload/globals.gd"
+GameManager="*res://scripts/autoload/game_manager.gd"

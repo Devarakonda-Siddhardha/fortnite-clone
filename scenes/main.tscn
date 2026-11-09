@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://main001"]
+[gd_scene load_steps=9 format=3 uid="uid://main001"]
 
 [ext_resource type="PackedScene" path="res://scenes/environment/island.tscn" id="1_island"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/environment/storm.tscn" id="3_storm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
+[ext_resource type="Script" path="res://scripts/environment/bot_spawner.gd" id="5_bots"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.35, 0.65, 0.95, 1)
@@ -36,6 +37,9 @@ directional_shadow_max_distance = 250.0
 [node name="Island" parent="." instance=ExtResource("1_island")]
 
 [node name="Storm" parent="." instance=ExtResource("3_storm")]
+
+[node name="BotSpawner" type="Node3D" parent="."]
+script = ExtResource("5_bots")
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
