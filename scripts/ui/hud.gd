@@ -47,6 +47,35 @@ func _ready() -> void:
 	_on_shield_changed(Globals.player_shield, 100.0)
 	_on_materials_changed(Globals.wood, Globals.stone, Globals.metal)
 	_on_alive_count_changed(GameManager.players_alive)
+	
+	setup_hotbar_icons()
+
+func setup_hotbar_icons() -> void:
+	if not hotbar_container:
+		return
+	var icon_paths = [
+		"res://assets/icons/pickaxe.png",
+		"res://assets/icons/assault_rifle.png",
+		"res://assets/icons/shotgun.png",
+		"res://assets/icons/sniper_rifle.png",
+		"res://assets/icons/shield_potion.png",
+		"res://assets/icons/medkit.png"
+	]
+	for i in range(min(hotbar_container.get_child_count(), icon_paths.size())):
+		var slot = hotbar_container.get_child(i)
+		var path = icon_paths[i]
+		if ResourceLoader.exists(path):
+			var tex = load(path)
+			var tr = TextureRect.new()
+			tr.texture = tex
+			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			tr.custom_minimum_size = Vector2(36, 36)
+			slot.add_child(tr)
+			# Hide text label if present so icon shines
+			var lbl = slot.get_node_or_null("Label")
+			if lbl:
+				lbl.visible = false
 
 func _process(_delta: float) -> void:
 	if build_mode_panel:
@@ -129,6 +158,14 @@ func _on_victory_royale() -> void:
 		victory_banner.scale = Vector2(0.5, 0.5)
 		var tween = create_tween()
 		tween.tween_property(victory_banner, "scale", Vector2(1.0, 1.0), 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		
+		# Play ElevenLabs Victory Royale Fanfare
+		var sfx = load("res://assets/audio/victory_royale.mp3")
+		if sfx:
+			var asp = AudioStreamPlayer.new()
+			asp.stream = sfx
+			add_child(asp)
+			asp.play()
 
 func _on_game_over() -> void:
 	if game_over_banner:

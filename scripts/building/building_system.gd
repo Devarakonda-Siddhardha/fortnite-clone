@@ -199,6 +199,15 @@ func try_place_piece() -> void:
 		new_piece.global_rotation = Vector3(0, target_rotation_y, 0)
 		new_piece.apply_material_color()
 		
+		# Play ElevenLabs build place sound
+		var sfx = load("res://assets/audio/build_place.mp3")
+		if sfx:
+			var asp = AudioStreamPlayer.new()
+			asp.stream = sfx
+			add_child(asp)
+			asp.play()
+			get_tree().create_timer(1.0).timeout.connect(asp.queue_free)
+		
 		place_cooldown = TURBO_BUILD_RATE
 
 func is_piece_overlapping() -> bool:

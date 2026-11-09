@@ -36,6 +36,15 @@ func start_phase(phase: int) -> void:
 	phase_duration = 45.0
 	phase_timer = phase_duration
 	
+	# Play ElevenLabs storm warning sound
+	var sfx = load("res://assets/audio/storm_warning.mp3")
+	if sfx:
+		var asp = AudioStreamPlayer.new()
+		asp.stream = sfx
+		add_child(asp)
+		asp.play()
+		get_tree().create_timer(3.5).timeout.connect(asp.queue_free)
+	
 	# Randomize new center within current safe circle
 	if phase > 1:
 		var max_offset = current_radius - target_radius

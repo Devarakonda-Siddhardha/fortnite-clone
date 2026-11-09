@@ -35,6 +35,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 @onready var vision_ray: RayCast3D = $VisionRayCast
 @onready var shoot_sound: AudioStreamPlayer3D = $ShootSound
 @onready var mesh_node: Node3D = $MeshInstance3D
+@onready var character_animator: Node3D = $CharacterAnimator
 
 const WALL_SCENE = preload("res://scenes/building/wall.tscn")
 const PICKUP_SCENE = preload("res://scenes/environment/pickup.tscn")
@@ -46,6 +47,20 @@ func _ready() -> void:
 	shield = max_shield
 	Globals.storm_updated.connect(_on_storm_updated)
 	pick_new_patrol_target()
+	
+	if character_animator:
+		var bot_models = [
+			"res://assets/characters/Kate.fbx",
+			"res://assets/characters/Swat.fbx",
+			"res://assets/characters/Vanguard.fbx",
+			"res://assets/characters/Remy.fbx",
+			"res://assets/characters/Ninja.fbx",
+			"res://assets/characters/YBot.fbx",
+			"res://assets/characters/SportyGranny.fbx",
+			"res://assets/characters/Ty.fbx"
+		]
+		var model_idx = abs(bot_name.hash()) % bot_models.size()
+		character_animator.character_fbx_path = bot_models[model_idx]
 
 func _on_storm_updated(radius: float, center: Vector3, _phase: int, _time_left: float) -> void:
 	storm_radius = radius
@@ -77,6 +92,11 @@ func _physics_process(delta: float) -> void:
 			handle_flee_storm(delta)
 	
 	move_and_slide()
+	
+	# Update 3D character animation
+	if character_animator and character_animator.has_method("update_locomotion"):
+		var horiz = Vector2(velocity.x, velocity.z).length()
+		character_animator.update_locomotion(horiz, current_state == State.FLEE_STORM, false, false)
 
 func scan_for_targets() -> void:
 	var player = get_tree().get_first_node_in_group("player")

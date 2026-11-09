@@ -43,6 +43,15 @@ func open_chest() -> void:
 		return
 	is_opened = true
 	
+	# Play ElevenLabs chest open sound
+	var sfx = load("res://assets/audio/chest_open.mp3")
+	if sfx:
+		var asp = AudioStreamPlayer3D.new()
+		asp.stream = sfx
+		asp.max_distance = 35.0
+		add_child(asp)
+		asp.play()
+	
 	# Open lid rotation
 	if lid_node:
 		var tween = create_tween()

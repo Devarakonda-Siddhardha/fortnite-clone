@@ -12,6 +12,13 @@ var sfx_shotgun: AudioStream = preload("res://assets/audio/shotgun.wav")
 var sfx_sniper: AudioStream = preload("res://assets/audio/sniper_rifle.wav")
 var sfx_pistol: AudioStream = preload("res://assets/audio/pistol.wav")
 
+# ElevenLabs Sound Effects
+var sfx_pickaxe_swing: AudioStream = preload("res://assets/audio/pickaxe_swing.mp3")
+var sfx_pickaxe_hit: AudioStream = preload("res://assets/audio/pickaxe_hit.mp3")
+var sfx_weakpoint_hit: AudioStream = preload("res://assets/audio/weakpoint_hit.mp3")
+var sfx_shield_drink: AudioStream = preload("res://assets/audio/shield_drink.mp3")
+var sfx_medkit_use: AudioStream = preload("res://assets/audio/medkit_use.mp3")
+
 var audio_player: AudioStreamPlayer = null
 
 # Held weapon visual representation
@@ -148,6 +155,13 @@ func apply_recoil(recoil_z: float = 0.08) -> void:
 
 func swing_pickaxe() -> void:
 	fire_cooldown = 0.45 # Cadence
+	play_sound(sfx_pickaxe_swing)
+	
+	# Trigger 3D character swing animation if available
+	if player:
+		var anim = player.get_node_or_null("CharacterAnimator")
+		if anim and anim.has_method("play_action"):
+			anim.play_action("swing")
 	
 	# Visual swing forward punch
 	if weapon_holder:
@@ -179,9 +193,11 @@ func swing_pickaxe() -> void:
 		damage = 50.0
 		material_yield = 10
 		weak_point_active = false
+		play_sound(sfx_weakpoint_hit)
 	else:
 		# Spawn new weak point on target surface
 		spawn_weak_point(collider, hit_pos, raycast.get_collision_normal())
+		play_sound(sfx_pickaxe_hit)
 	
 	# Determine material type and give to player
 	if collider.is_in_group("tree") or (collider.is_in_group("buildables") and "material_type" in collider and collider.material_type == Globals.MaterialType.WOOD):
@@ -235,12 +251,14 @@ func consume_shield_potion() -> void:
 	if Globals.player_shield >= 100.0:
 		return
 	fire_cooldown = 1.2
+	play_sound(sfx_shield_drink)
 	Globals.player_shield = min(100.0, Globals.player_shield + 50.0)
 
 func consume_medkit() -> void:
 	if Globals.player_health >= 100.0:
 		return
 	fire_cooldown = 2.0
+	play_sound(sfx_medkit_use)
 	Globals.player_health = 100.0
 
 func fire_hitscan_bullet(damage: float, spread_amount: float, weapon_name: String) -> void:

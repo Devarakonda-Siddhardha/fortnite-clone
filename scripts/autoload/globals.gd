@@ -103,7 +103,17 @@ func apply_damage(amount: float, bypass_shield: bool = false) -> void:
 			var remainder = amount - player_shield
 			player_shield = 0.0
 			player_health -= remainder
+			
+			# Play ElevenLabs shield break sound
+			var sfx = load("res://assets/audio/shield_break.mp3")
+			if sfx:
+				var asp = AudioStreamPlayer.new()
+				asp.stream = sfx
+				add_child(asp)
+				asp.play()
+				get_tree().create_timer(1.5).timeout.connect(asp.queue_free)
 	
 	if player_health <= 0.0:
-		if not GameManager.is_player_eliminated:
-			GameManager.register_player_death("Storm" if bypass_shield else "Bot")
+		var gm = get_node_or_null("/root/GameManager")
+		if gm and not gm.is_player_eliminated:
+			gm.register_player_death("Storm" if bypass_shield else "Bot")

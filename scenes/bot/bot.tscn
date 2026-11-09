@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bot001"]
+[gd_scene load_steps=7 format=3 uid="uid://bot001"]
 
 [ext_resource type="Script" path="res://scripts/bot/bot_ai.gd" id="1_script"]
 [ext_resource type="AudioStream" path="res://assets/audio/assault_rifle.wav" id="2_sound"]
+[ext_resource type="Script" path="res://scripts/player/character_animator.gd" id="3_anim"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bot"]
 radius = 0.45
@@ -28,6 +29,10 @@ shape = SubResource("CapsuleShape3D_bot")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_bot")
+
+[node name="CharacterAnimator" type="Node3D" parent="."]
+script = ExtResource("3_anim")
+is_bot = true
 
 [node name="VisionRayCast" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)

@@ -33,6 +33,9 @@ var is_gliding: bool = false
 @onready var weapon_raycast: RayCast3D = $CameraPivot/SpringArm3D/Camera3D/WeaponRayCast
 @onready var building_system: Node3D = $BuildingSystem
 
+@onready var character_animator: Node3D = $CharacterAnimator
+@onready var sfx_glider: AudioStream = preload("res://assets/audio/glider_open.mp3")
+
 # Mantle detection raycasts
 @onready var mantle_chest_ray: RayCast3D = $MantleChestRay
 @onready var mantle_head_ray: RayCast3D = $MantleHeadRay
@@ -85,6 +88,11 @@ func _physics_process(delta: float) -> void:
 	handle_movement(delta)
 	handle_mantle()
 	move_and_slide()
+	
+	# Update 3D character animation
+	if character_animator and character_animator.has_method("update_locomotion"):
+		var horiz_speed = Vector2(velocity.x, velocity.z).length()
+		character_animator.update_locomotion(horiz_speed, is_sprinting, is_sliding, is_gliding)
 
 func handle_crouch_and_slide(delta: float) -> void:
 	if Input.is_action_just_pressed("crouch"):
@@ -130,6 +138,12 @@ func handle_jump_and_glider(delta: float) -> void:
 			is_gliding = not is_gliding
 			if glider_mesh:
 				glider_mesh.visible = is_gliding
+			if is_gliding and sfx_glider:
+				var asp = AudioStreamPlayer.new()
+				asp.stream = sfx_glider
+				add_child(asp)
+				asp.play()
+				get_tree().create_timer(1.5).timeout.connect(asp.queue_free)
 		
 		# Apply gravity
 		if is_gliding:
